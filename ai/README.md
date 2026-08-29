@@ -47,6 +47,27 @@ provider = MockAiProvider(generate_content="백엔드 서비스 개발 경험이
 response = provider.generate(request)
 ```
 
+## Experience Question Policy
+
+경험 태그에 맞는 정적 질문 정책은 Provider와 독립적으로 조회할 수 있습니다.
+
+```python
+from ai.src.experience import (
+    ExperienceTag,
+    get_experience_question_policy,
+)
+
+policy = get_experience_question_policy(
+    ExperienceTag.JOB
+)
+
+for question in policy.questions:
+    print(question)
+```
+
+Experience question policies are static domain policies. Loading a question
+policy does not invoke an `AiProvider` and does not consume LLM tokens.
+
 ## 테스트
 
 저장소 루트에서 실행합니다.
