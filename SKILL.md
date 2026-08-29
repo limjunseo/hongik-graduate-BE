@@ -59,6 +59,14 @@ Pull Request Template, Issue Template, GitHub Actions, CODEOWNERS 등 GitHub 관
 실제 비밀 값은 저장소에 커밋하지 않습니다. 필요한 환경변수 이름만
 `.env.example`에 기록하고 실제 `.env` 파일은 `.gitignore`에서 제외합니다.
 
+## Version Policy
+
+Java, Spring Boot, Spring AI 또는 Maven 버전을 변경하기 전에 루트의
+[`VERSION_GUIDE.md`](./VERSION_GUIDE.md)를 확인합니다. Java 컴파일 버전과 CI의
+JDK 버전은 항상 함께 변경하고, Spring Boot parent와 Spring AI BOM의 호환 조합을
+공식 문서에서 검증합니다. 프레임워크가 관리하는 전이 의존성 버전을 임의로
+개별 고정하지 않습니다.
+
 ## Structure Principles
 
 1. 현재 필요하지 않은 구현 패키지를 과도하게 미리 생성하지 않습니다.
