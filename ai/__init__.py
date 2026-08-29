@@ -1,0 +1,1 @@
+"""Hongik Graduate AI package."""
