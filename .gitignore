@@ -1,5 +1,5 @@
 # Environment files
-.env
+.env-local
 .env.*
 !.env.example
 
@@ -15,5 +15,6 @@
 build/
 target/
 dist/
+be/data/
 __pycache__/
 *.pyc
