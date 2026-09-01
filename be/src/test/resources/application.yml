@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: hongik-graduate-be-test
+
+app:
+  auth:
+    jwt-secret: dGVzdC1qd3Qtc2VjcmV0LWtleS1tdXN0LWJlLWF0LWxlYXN0LTMyLWJ5dGVzLWxvbmc=
+    access-token-expiration: 900000
+    refresh-token-expiration: 1209600000
+    email-verification-expiration: 600000
+    email-verification-resend-interval: 60000
+    email-verification-max-attempts: 5
+    mail-from: test@hongik-graduate.local

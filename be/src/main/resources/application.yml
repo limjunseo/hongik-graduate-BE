@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: hongik-graduate-be
+  config:
+    import:
+      - optional:file:./.env-local[.properties]
+      - optional:file:../.env-local[.properties]
+  profiles:
+    active: local
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    display-request-duration: true
+
+app:
+  auth:
+    access-token-expiration: 900000
+    refresh-token-expiration: 1209600000
+    email-verification-expiration: 600000
+    email-verification-resend-interval: 60000
+    email-verification-max-attempts: 5
