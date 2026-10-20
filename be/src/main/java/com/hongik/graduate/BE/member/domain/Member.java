@@ -37,6 +37,21 @@ public class Member {
     @Column(nullable = false, length = 20)
     private MemberRole role;
 
+    @Column(name = "provider_id", unique = true, length = 255)
+    private String providerId;
+
+    @Column(name = "profile_age")
+    private Integer age;
+
+    @Column(name = "profile_gender", length = 30)
+    private String gender;
+
+    @Column(name = "profile_school", length = 150)
+    private String school;
+
+    @Column(name = "desired_job", length = 100)
+    private String desiredJob;
+
     @Column(nullable = false, updatable = false)
     private Instant createdAt;
 
@@ -52,6 +67,35 @@ public class Member {
         this.provider = AuthProvider.LOCAL;
         this.role = MemberRole.USER;
     }
+
+    public static Member google(String email, String providerId) {
+        Member member = new Member();
+        member.email = email;
+        member.provider = AuthProvider.GOOGLE;
+        member.providerId = providerId;
+        member.role = MemberRole.USER;
+        return member;
+    }
+
+    public Integer getAge() { return age; }
+    public String getGender() { return gender; }
+    public String getSchool() { return school; }
+    public String getDesiredJob() { return desiredJob; }
+    public String getProviderId() { return providerId; }
+    public boolean isBasicCompleted() {
+        return age != null && gender != null && !gender.isBlank()
+                && school != null && !school.isBlank();
+    }
+    public boolean isProfileCompleted() {
+        return isBasicCompleted() && desiredJob != null && !desiredJob.isBlank();
+    }
+    public String onboardingStep() {
+        return !isBasicCompleted() ? "BASIC" : !isProfileCompleted() ? "JOB" : "COMPLETED";
+    }
+    public void updateBasic(Integer age, String gender, String school) {
+        this.age = age; this.gender = gender; this.school = school;
+    }
+    public void updateJob(String desiredJob) { this.desiredJob = desiredJob; }
 
     @PrePersist
     void onCreate() {

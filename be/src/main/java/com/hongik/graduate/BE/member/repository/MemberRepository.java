@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface MemberRepository extends JpaRepository<Member, UUID> {
     boolean existsByEmail(String email);
     Optional<Member> findByEmail(String email);
+    Optional<Member> findByProviderAndProviderId(com.hongik.graduate.BE.member.domain.AuthProvider provider, String providerId);
 }

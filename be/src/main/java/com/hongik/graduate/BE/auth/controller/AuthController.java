@@ -28,9 +28,20 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final com.hongik.graduate.BE.auth.service.GoogleLoginService googleLoginService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService,
+            com.hongik.graduate.BE.auth.service.GoogleLoginService googleLoginService) {
         this.authService = authService;
+        this.googleLoginService = googleLoginService;
+    }
+
+    public record GoogleLoginRequest(String code, String redirectUri) {}
+
+    @PostMapping("/login/google")
+    @Operation(summary = "Google 로그인", description = "Google 인가코드를 검증하고 공통 회원 JWT를 발급합니다.")
+    public ApiResponse<TokenResponse> googleLogin(@RequestBody GoogleLoginRequest request) {
+        return ApiResponse.success(googleLoginService.login(request.code(), request.redirectUri()));
     }
 
     @PostMapping("/email/send")

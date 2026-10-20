@@ -2,12 +2,15 @@ package com.hongik.graduate.auth;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.concurrent.atomic.AtomicReference;
 
 import com.hongik.graduate.BE.auth.service.VerificationEmailSender;
+import com.hongik.graduate.BE.auth.service.AuthService;
+import com.hongik.graduate.BE.member.domain.Member;
 import com.hongik.graduate.BE.member.repository.EmailVerificationRepository;
 import com.hongik.graduate.BE.member.repository.MemberRepository;
 import com.hongik.graduate.BE.member.repository.RefreshTokenRepository;
@@ -32,6 +35,9 @@ class AuthIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private MemberRepository memberRepository;
@@ -158,6 +164,54 @@ class AuthIntegrationTest {
 
         mockMvc.perform(get("/swagger-ui.html"))
                 .andExpect(status().is3xxRedirection());
+    }
+
+    @Test
+    void onboardingEndpointsPersistStagesAndRequireAuthentication() throws Exception {
+        completeSignup();
+        MvcResult result = mockMvc.perform(post("/api/auth/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"email\":\"user@example.com\",\"password\":\"password123\"}"))
+                .andExpect(status().isOk()).andReturn();
+        String token = JsonPath.read(result.getResponse().getContentAsString(), "$.data.accessToken");
+        mockMvc.perform(get("/api/members/me/profile"))
+                .andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/members/me/profile")
+                .header("Authorization","Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.onboardingStep").value("BASIC"));
+        mockMvc.perform(put("/api/members/me/profile/job")
+                .header("Authorization","Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"desiredJob\":\"BACKEND\"}"))
+                .andExpect(status().isBadRequest());
+        mockMvc.perform(put("/api/members/me/profile/basic")
+                .header("Authorization","Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"age\":24,\"gender\":\"FEMALE\",\"school\":\"홍익대학교\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.onboardingStep").value("JOB"));
+        mockMvc.perform(put("/api/members/me/profile/job")
+                .header("Authorization","Bearer " + token)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"desiredJob\":\"BACKEND\"}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.onboardingStep").value("COMPLETED"))
+                .andExpect(jsonPath("$.data.profileCompleted").value(true));
+    }
+
+    @Test
+    void googleMemberJwtCanReadBasicOnboardingState() throws Exception {
+        Member googleMember = memberRepository.saveAndFlush(
+                Member.google("oauth-test@example.com", "google-sub-test"));
+        String token = authService.issueForAuthenticatedMember(googleMember).accessToken();
+        mockMvc.perform(get("/api/members/me/profile")
+                .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.email").value("oauth-test@example.com"))
+                .andExpect(jsonPath("$.data.signupStatus").value("IN_PROGRESS"))
+                .andExpect(jsonPath("$.data.onboardingStep").value("BASIC"))
+                .andExpect(jsonPath("$.data.profileCompleted").value(false));
     }
 
     private void completeSignup() throws Exception {

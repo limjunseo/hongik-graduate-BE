@@ -164,6 +164,11 @@ public class AuthService {
                 .ifPresent(RefreshToken::revoke);
     }
 
+    @Transactional
+    public TokenResponse issueForAuthenticatedMember(Member member) {
+        return issueTokens(member);
+    }
+
     private TokenResponse issueTokens(Member member) {
         JwtTokenService.TokenPair tokens = jwtTokenService.issue(member);
         Jwt refresh = jwtTokenService.decodeRefresh(tokens.refreshToken());
