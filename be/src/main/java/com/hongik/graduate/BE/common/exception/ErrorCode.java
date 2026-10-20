@@ -19,6 +19,7 @@ public enum ErrorCode {
     REFRESH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "Refresh Token이 만료되었습니다."),
     INVALID_REFRESH_TOKEN(HttpStatus.UNAUTHORIZED, "Refresh Token이 올바르지 않습니다."),
     EXPERIENCE_NOT_FOUND(HttpStatus.NOT_FOUND, "경험을 찾을 수 없습니다."),
+    COVER_LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "자기소개서를 찾을 수 없습니다."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
 
