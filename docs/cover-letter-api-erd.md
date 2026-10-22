@@ -120,5 +120,6 @@
 - 경험 연결: `question_experiences`에서 문항별 경험 조회·연결·해제 지원. 회원 소유권 검사 및 중복 연결 방지 적용.
 - 경험 연결 API: `GET/POST /api/cover-letters/{id}/questions/{questionId}/experiences`, `DELETE /api/cover-letters/{id}/questions/{questionId}/experiences/{experienceId}`.
 - 버전 관리: 초안/1.0/2.0 등 라벨과 자소서 문항·답변의 저장 시점 스냅샷 보관. 버전 생성, 목록, 상세 및 복원 API 구현.
+- 채용공고 데이터 저장: `job_postings` 테이블에 자기소개서별 공고 URL, JD 원문, 자격요건, 우대사항, 전형절차 저장·조회·갱신·삭제 구현. `GET/PUT/DELETE /api/cover-letters/{coverId}/posting`을 제공한다. PUT은 전체 필드를 갱신하며 선택 필드를 null로 초기화할 수 있다. 동일 자소서에는 공고 하나만 연결되고, 자소서 삭제 시 공고도 삭제된다. URL 수집·분석 및 AI 기능은 포함하지 않는다.
 - 후속 작업: 채용공고 분석·AI 첨삭·PDF. 운영 DB 마이그레이션 및 main 머지는 별도 작업이다.
 
