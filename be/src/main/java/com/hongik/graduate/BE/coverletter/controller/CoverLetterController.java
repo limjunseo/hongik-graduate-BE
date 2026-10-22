@@ -8,7 +8,8 @@ import java.util.*;
 @RestController @RequestMapping("/api/cover-letters")
 public class CoverLetterController {
  private final CoverLetterService service;
- public CoverLetterController(CoverLetterService service){this.service=service;}
+ private final com.hongik.graduate.BE.coverletter.service.CoverLetterVersionService versions;
+ public CoverLetterController(CoverLetterService service,com.hongik.graduate.BE.coverletter.service.CoverLetterVersionService versions){this.service=service;this.versions=versions;}
  private UUID uid(Jwt jwt){return UUID.fromString(jwt.getSubject());}
  @GetMapping public ApiResponse<?> list(@AuthenticationPrincipal Jwt jwt,
  @RequestParam(required=false) String keyword,@RequestParam(required=false) String status,
@@ -33,4 +34,8 @@ public class CoverLetterController {
  @PutMapping("/{id}/questions/order") public ApiResponse<?> reorder(@AuthenticationPrincipal Jwt jwt,
  @PathVariable UUID id,@RequestBody CoverLetterService.OrderRequest req){
  return ApiResponse.success(service.reorder(uid(jwt),id,req));}
+ @PostMapping("/{id}/versions") public ApiResponse<?> saveVersion(@AuthenticationPrincipal Jwt jwt,@PathVariable UUID id,@RequestBody com.hongik.graduate.BE.coverletter.service.CoverLetterVersionService.SaveRequest req){return ApiResponse.success(versions.save(uid(jwt),id,req));}
+ @GetMapping("/{id}/versions") public ApiResponse<?> listVersions(@AuthenticationPrincipal Jwt jwt,@PathVariable UUID id){return ApiResponse.success(versions.list(uid(jwt),id));}
+ @GetMapping("/{id}/versions/{versionId}") public ApiResponse<?> getVersion(@AuthenticationPrincipal Jwt jwt,@PathVariable UUID id,@PathVariable UUID versionId){return ApiResponse.success(versions.get(uid(jwt),id,versionId));}
+ @PostMapping("/{id}/versions/{versionId}/restore") public ApiResponse<?> restoreVersion(@AuthenticationPrincipal Jwt jwt,@PathVariable UUID id,@PathVariable UUID versionId){return ApiResponse.success(versions.restore(uid(jwt),id,versionId));}
 }

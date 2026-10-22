@@ -6,7 +6,8 @@ import java.time.*;import java.util.*;import java.util.stream.*;
 @Service @Transactional
 public class CoverLetterService {
  private final CoverLetterRepository covers;private final CoverLetterQuestionRepository questions;
- public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions){this.covers=covers;this.questions=questions;}
+ private final CoverLetterVersionRepository versions;
+ public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,CoverLetterVersionRepository versions){this.covers=covers;this.questions=questions;this.versions=versions;}
  public record Create(String companyName,String positionName,LocalDate deadline,String jdUrl){}
  public record Patch(String companyName,String positionName,LocalDate deadline,String status,String jdUrl){}
  public record QuestionCreate(String questionText,Integer characterLimit){}
@@ -51,7 +52,7 @@ public class CoverLetterService {
  if(req.jdUrl()!=null)c.jdUrl=validateJdUrl(req.jdUrl());
  if(req.status()!=null){if(!Set.of("DRAFT","IN_PROGRESS","COMPLETED").contains(req.status()))throw invalid();c.status=req.status();}
  return c;}
- public void delete(UUID user,UUID id){own(user,id);questions.deleteByCoverLetterId(id);covers.deleteById(id);}
+ public void delete(UUID user,UUID id){own(user,id);versions.deleteByCoverLetterId(id);questions.deleteByCoverLetterId(id);covers.deleteById(id);}
  public CoverLetterQuestion addQuestion(UUID user,UUID parent,QuestionCreate req){
  own(user,parent);if(req==null)throw invalid();text(req.questionText(),10000);limit(req.characterLimit());
  long count=questions.countByCoverLetterId(parent);if(count>=30)throw invalid();
