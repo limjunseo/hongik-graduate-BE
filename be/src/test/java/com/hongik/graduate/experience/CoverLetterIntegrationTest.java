@@ -18,10 +18,22 @@ class CoverLetterIntegrationTest {
   String jwt=auth.issueForAuthenticatedMember(me).accessToken();
   String stranger=auth.issueForAuthenticatedMember(other).accessToken();
   String created=mvc.perform(post("/api/cover-letters").header("Authorization","Bearer "+jwt)
-    .contentType(MediaType.APPLICATION_JSON).content("{\"companyName\":\"회사A\",\"positionName\":\"백엔드\",\"deadline\":\"2026-12-01\"}"))
+    .contentType(MediaType.APPLICATION_JSON).content("{\"companyName\":\"회사A\",\"positionName\":\"백엔드\",\"deadline\":\"2026-12-01\",\"jdUrl\":\"https://jobs.example.com/openings/42\"}"))
     .andExpect(status().isOk()).andExpect(jsonPath("$.data.companyName").value("회사A"))
+    .andExpect(jsonPath("$.data.jdUrl").value("https://jobs.example.com/openings/42"))
     .andReturn().getResponse().getContentAsString();
   String id=JsonPath.read(created,"$.data.id");
+  mvc.perform(get("/api/cover-letters/"+id).header("Authorization","Bearer "+jwt))
+    .andExpect(status().isOk()).andExpect(jsonPath("$.data.coverLetter.jdUrl").value("https://jobs.example.com/openings/42"));
+  mvc.perform(patch("/api/cover-letters/"+id).header("Authorization","Bearer "+jwt)
+    .contentType(MediaType.APPLICATION_JSON).content("{\"jdUrl\":\"https://jobs.example.com/openings/43\"}"))
+    .andExpect(status().isOk()).andExpect(jsonPath("$.data.jdUrl").value("https://jobs.example.com/openings/43"));
+  mvc.perform(patch("/api/cover-letters/"+id).header("Authorization","Bearer "+jwt)
+    .contentType(MediaType.APPLICATION_JSON).content("{\"jdUrl\":\"javascript:alert(1)\"}"))
+    .andExpect(status().isBadRequest());
+  mvc.perform(patch("/api/cover-letters/"+id).header("Authorization","Bearer "+stranger)
+    .contentType(MediaType.APPLICATION_JSON).content("{\"jdUrl\":\"https://jobs.example.com/private\"}"))
+    .andExpect(status().isNotFound());
   mvc.perform(get("/api/cover-letters/"+id).header("Authorization","Bearer "+stranger)).andExpect(status().isNotFound());
   String first=mvc.perform(post("/api/cover-letters/"+id+"/questions").header("Authorization","Bearer "+jwt)
     .contentType(MediaType.APPLICATION_JSON).content("{\"questionText\":\"지원 동기\",\"characterLimit\":300}"))
