@@ -6,7 +6,8 @@ import java.time.*;import java.util.*;import java.util.stream.*;
 @Service @Transactional
 public class CoverLetterService {
  private final CoverLetterRepository covers;private final CoverLetterQuestionRepository questions;
- public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions){this.covers=covers;this.questions=questions;}
+ private final QuestionExperienceLinkRepository links;
+ public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,QuestionExperienceLinkRepository links){this.covers=covers;this.questions=questions;this.links=links;}
  public record Create(String companyName,String positionName,LocalDate deadline,String jdUrl){}
  public record Patch(String companyName,String positionName,LocalDate deadline,String status,String jdUrl){}
  public record QuestionCreate(String questionText,Integer characterLimit){}
@@ -51,7 +52,9 @@ public class CoverLetterService {
  if(req.jdUrl()!=null)c.jdUrl=validateJdUrl(req.jdUrl());
  if(req.status()!=null){if(!Set.of("DRAFT","IN_PROGRESS","COMPLETED").contains(req.status()))throw invalid();c.status=req.status();}
  return c;}
- public void delete(UUID user,UUID id){own(user,id);questions.deleteByCoverLetterId(id);covers.deleteById(id);}
+ public void delete(UUID user,UUID id){own(user,id);
+ for(var q:questions.findByCoverLetterIdOrderByDisplayOrderAsc(id))links.deleteByQuestionId(q.id);
+ questions.deleteByCoverLetterId(id);covers.deleteById(id);}
  public CoverLetterQuestion addQuestion(UUID user,UUID parent,QuestionCreate req){
  own(user,parent);if(req==null)throw invalid();text(req.questionText(),10000);limit(req.characterLimit());
  long count=questions.countByCoverLetterId(parent);if(count>=30)throw invalid();
@@ -63,7 +66,7 @@ public class CoverLetterService {
  if(req.answerText()!=null){answer(req.answerText(),e.characterLimit);e.answerText=req.answerText();}
  return e;}
  public void deleteQuestion(UUID user,UUID parent,UUID q){
- ownQuestion(user,parent,q);questions.deleteById(q);
+ ownQuestion(user,parent,q);links.deleteByQuestionId(q);questions.deleteById(q);
  List<CoverLetterQuestion> rest=questions.findByCoverLetterIdOrderByDisplayOrderAsc(parent);
  for(int i=0;i<rest.size();i++)rest.get(i).displayOrder=i+1;}
  public List<CoverLetterQuestion> reorder(UUID user,UUID parent,OrderRequest req){
