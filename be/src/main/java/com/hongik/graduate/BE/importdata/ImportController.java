@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.http.*;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name="가져오기",description="PDF 파일 업로드·저장 및 공개 URL 본문 수집")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/imports")
 public class ImportController {
  private final ImportFileService files;

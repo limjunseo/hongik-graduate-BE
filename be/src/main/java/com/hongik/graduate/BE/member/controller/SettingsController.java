@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name="사용자 설정",description="테마 및 알림 수신 환경설정")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/members/me/settings")
 public class SettingsController{
  private final SettingsService service;

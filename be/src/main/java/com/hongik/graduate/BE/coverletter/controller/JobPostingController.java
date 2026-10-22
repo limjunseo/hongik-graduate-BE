@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name="채용공고",description="자기소개서별 채용공고 원문 및 조건 저장")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/cover-letters/{coverId}/posting")
 public class JobPostingController {
  private final JobPostingService service;

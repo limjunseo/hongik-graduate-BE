@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name="지원 현황",description="칸반 단계별 지원 현황 조회 및 상태 변경")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/application-board")
 public class ApplicationBoardController {
  private final ApplicationBoardService service;

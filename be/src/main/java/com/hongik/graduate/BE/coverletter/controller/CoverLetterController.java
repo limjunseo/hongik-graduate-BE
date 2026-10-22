@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name = "자기소개서", description = "기업·직무별 자기소개서, 문항 및 작성 버전 관리")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/cover-letters")
 public class CoverLetterController {
  private final CoverLetterService service;

@@ -4,6 +4,7 @@ import com.hongik.graduate.BE.common.api.ApiResponse;
 import org.springframework.web.bind.annotation.*;import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name = "경험 정리", description = "경험 카드와 빠르게 작성 답변 관리")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api")
 public class ExperienceController {
  private final ExperienceService service;
