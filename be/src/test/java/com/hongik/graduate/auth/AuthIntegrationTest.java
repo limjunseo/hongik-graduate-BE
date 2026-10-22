@@ -160,7 +160,10 @@ class AuthIntegrationTest {
     void swaggerDocumentationIsPubliclyAccessible() throws Exception {
         mockMvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.paths['/api/auth/login']").exists());
+                .andExpect(jsonPath("$.paths['/api/auth/login']").exists())
+                .andExpect(jsonPath("$.paths['/api/members/me/profile/basic'].put.security[0].bearerAuth").isArray())
+                .andExpect(jsonPath("$.paths['/api/members/me/settings'].get.security[0].bearerAuth").isArray())
+                .andExpect(jsonPath("$.paths['/api/auth/login'].post.security").doesNotExist());
 
         mockMvc.perform(get("/swagger-ui.html"))
                 .andExpect(status().is3xxRedirection());

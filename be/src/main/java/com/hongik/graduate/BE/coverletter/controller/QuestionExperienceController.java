@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name = "경험 연결", description = "자기소개서 문항별 경험 카드 연결 및 해제")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/cover-letters/{coverId}/questions/{questionId}/experiences")
 public class QuestionExperienceController {
  private final QuestionExperienceService service;

@@ -6,6 +6,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import java.util.*;
 @io.swagger.v3.oas.annotations.tags.Tag(name="지원 상세",description="마감일, 면접일, 서류결과, 이력서 및 포트폴리오 준비 여부")
+@io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 @RestController @RequestMapping("/api/cover-letters/{coverId}/application-detail")
 public class ApplicationDetailController{
  private final ApplicationDetailService service;
