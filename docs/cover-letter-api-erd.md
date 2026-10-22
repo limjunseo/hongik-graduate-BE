@@ -115,5 +115,7 @@
 - 1단계 자소서·문항 CRUD 엔티티, Repository, Service, Controller 구현 완료. Maven 전체 테스트 통과.
 - 목록은 keyword/status 필터, page/size를 제공한다(현 구현은 인메모리 페이징이며 totalElements 미제공).
 - 소유권 검사, 문항 30개 제한, 글자수 1~10,000자, 문항 순서 일괄 변경 검증 적용.
-- 경험 연결·채용공고 분석·AI 첨삭·버전 관리·PDF는 이후 단계에서 구현한다. 운영 DB 마이그레이션 및 main 머지는 별도 작업이다.
+- 경험 연결: `question_experiences` 테이블에 `(question_id, experience_id)` 유니크 제약으로 중복 방지. 같은 회원의 문항과 경험만 연결하며, 문항별 연결 목록 조회/연결/해제 지원. 문항·자소서·경험 삭제 시 연결만 함께 삭제하고 작성된 답변은 유지한다.
+- 경험 연결 API: `GET/POST /api/cover-letters/{id}/questions/{questionId}/experiences`, `DELETE /api/cover-letters/{id}/questions/{questionId}/experiences/{experienceId}`. POST 본문: `{"experienceId":"UUID"}`.
+- 채용공고 분석·AI 첨삭·버전 관리·PDF는 이후 단계에서 구현한다. 운영 DB 마이그레이션 및 main 머지는 별도 작업이다.
 
