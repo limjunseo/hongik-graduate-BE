@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+@io.swagger.v3.oas.annotations.tags.Tag(name = "Google OAuth", description = "로컬 환경 Google 로그인 시작 및 콜백")
 @RestController
 @Profile("local")
 public class GoogleCallbackController {
@@ -23,7 +24,8 @@ public class GoogleCallbackController {
         this.google = google;
     }
 
-    @GetMapping("/oauth2/authorization/google")
+    @io.swagger.v3.oas.annotations.Operation(summary = "Google 로그인 시작")
+ @GetMapping("/oauth2/authorization/google")
     public ResponseEntity<Void> authorize(HttpServletResponse response) {
         if (google.clientId().isBlank()) return ResponseEntity.status(503).build();
         byte[] bytes = new byte[32];
@@ -41,7 +43,8 @@ public class GoogleCallbackController {
         return ResponseEntity.status(302).location(URI.create(url)).build();
     }
 
-    @GetMapping("/login/oauth2/code/google")
+    @io.swagger.v3.oas.annotations.Operation(summary = "Google 로그인 콜백")
+ @GetMapping("/login/oauth2/code/google")
     public ResponseEntity<?> callback(@RequestParam(required = false) String code,
             @RequestParam(required = false) String state,
             @CookieValue(name = STATE_COOKIE, required = false) String savedState,
