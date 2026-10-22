@@ -16,5 +16,6 @@ build/
 target/
 dist/
 be/data/
+be/uploads/
 __pycache__/
 *.pyc

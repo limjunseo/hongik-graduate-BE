@@ -1,4 +1,8 @@
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
   application:
     name: hongik-graduate-be
   config:
@@ -16,6 +20,8 @@ springdoc:
     display-request-duration: true
 
 app:
+  imports:
+    directory: ${IMPORT_STORAGE_DIR:./uploads/imports}
   auth:
     access-token-expiration: 900000
     refresh-token-expiration: 1209600000
