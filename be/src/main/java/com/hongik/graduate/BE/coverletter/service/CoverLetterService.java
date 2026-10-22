@@ -6,8 +6,9 @@ import java.time.*;import java.util.*;import java.util.stream.*;
 @Service @Transactional
 public class CoverLetterService {
  private final CoverLetterRepository covers;private final CoverLetterQuestionRepository questions;
+ private final CoverLetterVersionRepository versions;
  private final QuestionExperienceLinkRepository links;
- public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,QuestionExperienceLinkRepository links){this.covers=covers;this.questions=questions;this.links=links;}
+ public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,CoverLetterVersionRepository versions,QuestionExperienceLinkRepository links){this.covers=covers;this.questions=questions;this.versions=versions;this.links=links;}
  public record Create(String companyName,String positionName,LocalDate deadline,String jdUrl){}
  public record Patch(String companyName,String positionName,LocalDate deadline,String status,String jdUrl){}
  public record QuestionCreate(String questionText,Integer characterLimit){}
@@ -53,6 +54,7 @@ public class CoverLetterService {
  if(req.status()!=null){if(!Set.of("DRAFT","IN_PROGRESS","COMPLETED").contains(req.status()))throw invalid();c.status=req.status();}
  return c;}
  public void delete(UUID user,UUID id){own(user,id);
+ versions.deleteByCoverLetterId(id);
  for(var q:questions.findByCoverLetterIdOrderByDisplayOrderAsc(id))links.deleteByQuestionId(q.id);
  questions.deleteByCoverLetterId(id);covers.deleteById(id);}
  public CoverLetterQuestion addQuestion(UUID user,UUID parent,QuestionCreate req){
