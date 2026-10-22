@@ -1,25 +1,33 @@
-# 가져오기 API (PDF 및 Notion)
+# Pofit 경험 관리 — 자료 가져오기
 
-백엔드에서 PDF 원본 보관 및 Notion 블록 텍스트 수집을 담당한다. 경험 카드 변환/AI 분석은 이 PR의 범위가 아니다.
+## 현재 MVP 구현
+경험 정리에서 PDF 또는 공개 URL의 자료를 가져온다. Notion 전용 API 및 공통 토큰은 제거했다.
 
-## 환경 설정
-- `IMPORT_STORAGE_DIR`: PDF 보관 폴더, 기본 `./uploads/imports`; 서버 재시작과 배포 이후에도 유지되는 볼륨 권장
-- `NOTION_IMPORT_TOKEN`: Notion Internal Integration Token. 서버에서만 보관하고 프론트에 노출하지 않는다.
-- Notion에서 해당 페이지를 이 통합에 공유해야 한다.
-- `NOTION_IMPORT_TOKEN` 미설정 시 Notion 가져오기 요청은 400으로 차단한다.
-
-## 인증된 API
-| Method | 경로 | 기능 |
+| 종류 | API | 저장 내용 |
 | --- | --- | --- |
-| POST (multipart/file) | `/api/imports/pdf` | 10MB 이하 PDF 검사·저장, 소유자별 DB 메타데이터 생성 |
-| POST (JSON) | `/api/imports/notion` | `{"pageId":"노션-페이지-ID-또는-URL"}` 로 텍스트 수집 및 저장 |
-| GET | `/api/imports` | 내 가져오기 목록 |
-| GET | `/api/imports/{id}` | 내 가져오기 상세 |
-| GET | `/api/imports/{id}/download` | 내가 업로드한 PDF 다운로드 |
+| PDF | POST /api/imports/pdf (multipart file) | PDF 원본을 UUID 파일명으로 저장, 가져오기 메타데이터 기록 |
+| URL | POST /api/imports/url, JSON {"url":"https://example.com/post"} | HTML 제목과 본문 텍스트 및 원본 주소 저장 |
+| 목록·상세 | GET /api/imports, GET /api/imports/{id} | 본인 자료만 반환 |
+| PDF 다운로드 | GET /api/imports/{id}/download | 본인 PDF만 다운로드 |
 
-## 제한 및 후속 과제
-- 파일 확장자 및 PDF 헤더 검사, 서버 10MB 업로드 한도. PDF 내용 텍스트 추출은 하지 않는다.
-- Notion은 페이지 내 블록의 `rich_text`를 수집하며 하위 블록도 탐색한다. API 요청 20회, 최대 문자 100,000자, 대기열 100개까지로 제한해 무한 수집을 막는다.
-- Notion 실제 인증·권한 부여·텍스트 회수는 테스트용 통합 토큰이 없어 검증하지 못했다. 운영 전 연결 테스트 필수.
-- 가져온 데이터는 유저별로 접근 제어한다. 파일 내용이 경험 정리 카드로 자동 반영되지는 않는다.
-- 로컬 저장소는 다중 서버 환경에서는 공유되지 않으므로 운영에서는 S3 또는 공용 볼륨으로 전환해야 한다.
+PDF는 10MB 제한, 확장자·헤더 검사. 기본 파일 경로는 ./uploads/imports이며 배포할 때 IMPORT_STORAGE_DIR로 영속 볼륨을 지정한다. PDF 텍스트 추출과 경험 카드 자동 변환은 이번 범위 밖이다.
+
+URL 수집은 공개 HTTP(S) HTML에 한정한다. Jsoup으로 제목과 본문 텍스트를 추출한다. 응답 1MB, 본문 10만 자, 연결 4초, 요청 8초 제한을 둔다. 리다이렉트는 따르지 않는다. 로그인 필요 페이지 및 JavaScript 렌더링만 하는 페이지는 실패하거나 일부만 수집될 수 있다.
+
+## 결정 이유
+가져오기는 Notion 전용이 아니라 블로그, 개인 사이트 등 다양한 경험 출처를 수용해야 한다. 사용자별 Notion OAuth를 필수로 두면 특정 서비스에 종속되고, 연결 화면·토큰 보관·권한 및 해제 구현이 필요해 MVP 범위가 커진다. 비공개 Notion 페이지까지 읽는 것은 현재 필수 요건이 아니므로 PDF와 공개 URL을 공통 입력 수단으로 채택했다. 공개 Notion 게시 페이지도 일반 웹페이지처럼 접근 가능할 때만 수집할 수 있다.
+
+## 안전성과 운영 한계
+- JWT 인증 및 자료별 소유권 검사 적용.
+- HTTP(S) 주소만 허용하며 localhost, 내부 IP 등 목적지 주소를 DNS 조회 결과 기준으로 차단한다. 포트는 기본값이나 80/443만 허용하고 리다이렉트는 따르지 않는다.
+- **DNS 검사 후 연결 시점에 주소가 바뀌는 DNS 재바인딩 등의 SSRF 위험을 현재 애플리케이션 검사만으로 완전히 방어할 수는 없다.** 운영에서는 네트워크 egress 차단 정책이나 고정 해석 IP 프록시를 추가하고 보안 테스트를 완료해야 한다.
+- 사이트별 robots 정책과 이용약관을 준수하며 인증·접근제어를 우회하지 않는다. 추출 실패 때 사용자가 직접 텍스트를 입력하는 UI는 별도 작업이다.
+- PDF 저장은 단일 서버 로컬 디스크다. 운영 시 영속 볼륨 또는 S3 등 객체 스토리지가 필요하다.
+
+## 이후 변경·확장 가능성
+자료 출처를 ImportedSource.sourceType (PDF/URL)으로 분리하고 원본 URL은 sourceUrl, 수집 본문은 collectedText에 보관한다. Notion OAuth, 블로그 제공 API 등 출처별 수집기를 나중에 추가하더라도 기존 목록·상세 조회 API는 유지하는 방향으로 확장한다.
+
+비공개 Notion 페이지 지원이 실제 요구로 확인되면 **선택적 연동**으로 OAuth 연결, 회원별 암호화 토큰 저장, 권한 관리·연결 해제를 추가할 수 있다. 이는 현재 공개 URL 가져오기를 대체하지 않는다. PDF 텍스트 추출과 경험 카드 자동 구성도 별도 단계로 다룬다.
+
+## 검증 범위
+PDF 업로드·다운로드·접근 제한, URL 내부 주소 차단을 테스트한다. 공개 Notion 및 다양한 블로그 실제 본문 추출 성공률, DNS 재바인딩 방어 및 사이트별 파싱 품질은 추가 검증이 필요하다.

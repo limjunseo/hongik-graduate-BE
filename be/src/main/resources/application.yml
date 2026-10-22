@@ -22,7 +22,6 @@ springdoc:
 app:
   imports:
     directory: ${IMPORT_STORAGE_DIR:./uploads/imports}
-    notion-token: ${NOTION_IMPORT_TOKEN:}
   auth:
     access-token-expiration: 900000
     refresh-token-expiration: 1209600000

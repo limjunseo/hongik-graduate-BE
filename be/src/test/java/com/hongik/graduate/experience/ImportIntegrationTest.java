@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class ImportIntegrationTest{
  @Autowired MemberRepository members;
  @Autowired ImportedSourceRepository imports;
- @Autowired NotionImportService notion;
  @TempDir Path tempDir;
  @Test void pdfValidationOwnershipAndDownload() throws Exception{
   var owner=members.save(Member.google("import-owner@example.com","import-owner"));
@@ -30,9 +29,10 @@ class ImportIntegrationTest{
   assertThrows(RuntimeException.class,()->service.upload(owner.getId(),new MockMultipartFile(
    "file","fake.txt","text/plain","%PDF-1.4".getBytes())));
  }
- @Test void notionRequiresConfiguredIntegrationToken(){
-  var owner=members.save(Member.google("notion-import@example.com","notion-import"));
-  NotionImportService withoutToken=new NotionImportService(imports,"");
-  assertThrows(RuntimeException.class,()->withoutToken.collect(owner.getId(),new NotionImportService.ImportRequest("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa")));
+ @Test void urlValidationBlocksPrivateTargets(){
+  assertThrows(RuntimeException.class,()->WebImportService.validateUrl("http://127.0.0.1/"));
+  assertThrows(RuntimeException.class,()->WebImportService.validateUrl("http://localhost/"));
+  assertThrows(RuntimeException.class,()->WebImportService.validateUrl("file:///etc/passwd"));
+  assertThrows(RuntimeException.class,()->WebImportService.validateUrl("https://example.com:8080/test"));
  }
 }
