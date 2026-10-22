@@ -39,6 +39,7 @@
 | cover_letters | id, member_id | UUID | PK, FK, NOT NULL |
 | cover_letters | company_name, position_name | VARCHAR(150) | 필수 |
 | cover_letters | deadline | DATE | 선택 |
+| cover_letters | jd_url | VARCHAR(2048) | 채용공고 원문 링크, 선택; 이번 작업에 구현 |
 | cover_letters | status, created_at, updated_at | VARCHAR(20), TIMESTAMP, TIMESTAMP | DRAFT/IN_PROGRESS/COMPLETED; 시간은 서버 생성 |
 | job_postings | id, cover_letter_id | UUID | PK, FK, cover_letter_id UNIQUE |
 | job_postings | source_type, source_url, original_text | VARCHAR(20), VARCHAR(2048), TEXT | URL/TEXT; 접근 불가 시 TEXT 입력 |
@@ -115,6 +116,7 @@
 - 1단계 자소서·문항 CRUD 엔티티, Repository, Service, Controller 구현 완료. Maven 전체 테스트 통과.
 - 목록은 keyword/status 필터, page/size를 제공한다(현 구현은 인메모리 페이징이며 totalElements 미제공).
 - 소유권 검사, 문항 30개 제한, 글자수 1~10,000자, 문항 순서 일괄 변경 검증 적용.
+- 자기소개서 JD URL 저장·조회·수정: `cover_letters.jd_url` 선택 컬럼 추가. 기존 `POST /api/cover-letters` 및 `PATCH /api/cover-letters/{id}` 요청의 `jdUrl`을 받고, 기존 목록·상세 응답에 포함한다. 2,048자 이하의 유효한 HTTP(S) 주소만 허용하며 PATCH에서 빈 문자열로 초기화할 수 있다. URL 수집·분석은 수행하지 않는다.
 - 경험 연결: `question_experiences` 테이블에 `(question_id, experience_id)` 유니크 제약으로 중복 방지. 같은 회원의 문항과 경험만 연결하며, 문항별 연결 목록 조회/연결/해제 지원. 문항·자소서·경험 삭제 시 연결만 함께 삭제하고 작성된 답변은 유지한다.
 - 경험 연결 API: `GET/POST /api/cover-letters/{id}/questions/{questionId}/experiences`, `DELETE /api/cover-letters/{id}/questions/{questionId}/experiences/{experienceId}`. POST 본문: `{"experienceId":"UUID"}`.
 - 채용공고 분석·AI 첨삭·버전 관리·PDF는 이후 단계에서 구현한다. 운영 DB 마이그레이션 및 main 머지는 별도 작업이다.

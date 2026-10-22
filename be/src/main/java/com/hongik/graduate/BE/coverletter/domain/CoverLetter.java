@@ -7,6 +7,7 @@ public class CoverLetter {
  @Column(name="company_name",nullable=false,length=150) public String companyName;
  @Column(name="position_name",nullable=false,length=150) public String positionName;
  public LocalDate deadline;
+ @Column(name="jd_url",length=2048) public String jdUrl;
  @Column(nullable=false,length=20) public String status="DRAFT";
  @Column(nullable=false,updatable=false) public Instant createdAt;
  @Column(nullable=false) public Instant updatedAt;
