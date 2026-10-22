@@ -11,9 +11,10 @@ public class CoverLetterVersionService {
  private final CoverLetterRepository covers;
  private final CoverLetterQuestionRepository questions;
  private final CoverLetterVersionRepository versions;
+ private final QuestionExperienceLinkRepository links;
  private final ObjectMapper mapper=new ObjectMapper();
- public CoverLetterVersionService(CoverLetterRepository c,CoverLetterQuestionRepository q,CoverLetterVersionRepository v){
- covers=c;questions=q;versions=v;}
+ public CoverLetterVersionService(CoverLetterRepository c,CoverLetterQuestionRepository q,CoverLetterVersionRepository v,QuestionExperienceLinkRepository l){
+ covers=c;questions=q;versions=v;links=l;}
  public record SaveRequest(String label){}
  public record QuestionSnapshot(UUID id,String questionText,int characterLimit,String answerText,int displayOrder){}
  public record Snapshot(List<QuestionSnapshot> questions){}
@@ -59,7 +60,10 @@ public class CoverLetterVersionService {
   q.answerText=item.answerText()==null?"":item.answerText();q.displayOrder=order++;
   questions.save(q);
  }
- for(var q:current)if(!retained.contains(q.id))questions.delete(q);
+ for(var q:current)if(!retained.contains(q.id)){
+ links.deleteByQuestionId(q.id);
+ questions.delete(q);
+ }
  questions.flush();
  return questions.findByCoverLetterIdOrderByDisplayOrderAsc(cover);
  }
