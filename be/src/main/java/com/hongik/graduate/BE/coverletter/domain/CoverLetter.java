@@ -9,6 +9,7 @@ public class CoverLetter {
  public LocalDate deadline;
  @Column(name="jd_url",length=2048) public String jdUrl;
  @Column(nullable=false,length=20) public String status="DRAFT";
+ @Column(name="application_status",nullable=false,length=20) public String applicationStatus="PLANNED";
  @Column(nullable=false,updatable=false) public Instant createdAt;
  @Column(nullable=false) public Instant updatedAt;
  protected CoverLetter(){}

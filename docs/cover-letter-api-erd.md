@@ -121,5 +121,6 @@
 - 경험 연결 API: `GET/POST /api/cover-letters/{id}/questions/{questionId}/experiences`, `DELETE /api/cover-letters/{id}/questions/{questionId}/experiences/{experienceId}`.
 - 버전 관리: 초안/1.0/2.0 등 라벨과 자소서 문항·답변의 저장 시점 스냅샷 보관. 버전 생성, 목록, 상세 및 복원 API 구현.
 - 채용공고 데이터 저장: `job_postings` 테이블에 자기소개서별 공고 URL, JD 원문, 자격요건, 우대사항, 전형절차 저장·조회·갱신·삭제 구현. `GET/PUT/DELETE /api/cover-letters/{coverId}/posting`을 제공한다. PUT은 전체 필드를 갱신하며 선택 필드를 null로 초기화할 수 있다. 동일 자소서에는 공고 하나만 연결되고, 자소서 삭제 시 공고도 삭제된다. URL 수집·분석 및 AI 기능은 포함하지 않는다.
+- 지원 현황 칸반: 기존 자소서 작성 상태 `status`와 분리한 `application_status` 컬럼을 추가했다. `GET /api/application-board`는 단계별 지원건 목록을 반환하고, `PATCH /api/application-board/{coverLetterId}/status`는 본인 지원건 상태를 변경한다. 상태값은 현재 `PLANNED`, `PREPARING`, `SUBMITTED`, `CLOSED`로 설정했으며 프론트와 최종 명칭 합의가 필요하다. 면접 기능은 추가하지 않는다.
 - 후속 작업: 채용공고 분석·AI 첨삭·PDF. 운영 DB 마이그레이션 및 main 머지는 별도 작업이다.
 
