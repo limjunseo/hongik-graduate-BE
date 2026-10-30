@@ -13,20 +13,38 @@ be/
     ├── main/
     │   ├── java/com/hongik/graduate/
     │   │   ├── GraduateApplication.java
+    │   │   ├── ai/common/        # Provider port, Mock, validation, feature gate
     │   │   └── ai/experience/
     │   └── resources/
     │       └── ai/prompts/experience/
     └── test/java/com/hongik/graduate/
 ```
 
-## Spring AI 공통 계약
+## AI 공통 기반 (1단계)
 
-별도 Provider 추상화를 만들지 않고 Spring AI의 `ChatModel`, `Prompt`,
-`PromptTemplate`, `ChatResponse`를 사용합니다. 현재는 실제 모델 starter를
-추가하지 않았으므로 애플리케이션 기동이나 테스트에 API Key가 필요하지
-않습니다.
+도메인 로직은 `com.hongik.graduate.ai.common.AiProvider` 포트의
+`generate(AiRequest)` / `chat(AiRequest)`를 사용합니다. `AiGateway`가
+기능 활성화 여부를 검사합니다. Spring AI `ChatModel`은 나중에
+실제 Provider 어댑터 내부에서 사용하며 업체 SDK 타입을 도메인에 노출하지 않습니다.
 
-향후 실제 Provider를 연결할 때 필요한 Spring AI starter와 설정만 추가합니다.
+- 기본 설정: `app.ai.enabled=false`, `app.ai.provider=mock`
+  (환경변수 `AI_ENABLED`, `AI_PROVIDER`로 제어).
+- 실제 LLM 스타터/API Key는 없습니다. 현재 `MockAiProvider`만 Bean으로 등록됩니다.
+  `AiGateway`가 꺼져 있으면 generate/chat 호출을 차단합니다.
+- 개발 목적으로 `AI_ENABLED=true`로 설정하더라도 응답에
+  `provider=mock`, `isMock=true` 및 `[MOCK ONLY]` 문구가 들어가며
+  실제 글이나 조언을 생성하지 않습니다.
+- 정적 템플릿: `resources/ai/prompts/common/{generate,chat}-v1.txt`,
+  템플릿 변수는 `${instruction}`입니다. 템플릿 이름·버전은 allowlist로 검사합니다.
+- `outputSchemaId=null`은 비어 있지 않은 일반 텍스트,
+  `mock-result-v1`은 JSON 객체의 필수 필드/타입 검증입니다.
+  추후 경험/JD/자소서별 실제 JSON 스키마는 해당 단계에서 추가합니다.
+- 오류는 `AiProviderException.Code`로 구분하며 실패를 정상 응답으로 위장하지 않습니다.
+- 채팅 히스토리는 SYSTEM 메시지 입력이 금지되고 USER 메시지로 끝나야 합니다.
+  개인 데이터/프롬프트/대화 원문을 별도 로그에 출력하지 않습니다.
+
+테스트: `AiCommonContractTest`, `AiBeanConfigurationTest`.
+기존 `SpringAiContractTest`는 Spring AI 타입의 호환성을 확인하는 테스트로 유지합니다.
 
 ## Experience Question Policy
 

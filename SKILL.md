@@ -34,9 +34,11 @@ Spring Boot 백엔드와 AI 도메인 코드를 함께 관리합니다.
 기능을 담당합니다. 정적 프롬프트 및 정책 파일은
 `src/main/resources/ai/`에 둡니다.
 
-실제 LLM Provider를 추가할 때는 Spring AI starter를 사용하고 Provider SDK
-타입이 도메인 경계를 넘어가지 않도록 합니다. 정적 정책 조회에는
-`ChatModel`이나 외부 API를 사용하지 않습니다.
+AI 서비스의 호출 경계는 `com.hongik.graduate.ai.common.AiProvider` 및
+기본 비활성 `AiGateway`이다. 현재는 `MockAiProvider`만 사용한다. 실제
+LLM Provider를 추가할 때 Spring AI starter/`ChatModel`은 어댑터 내부에서
+사용하고 Provider SDK 타입을 도메인에 노출하지 않는다. 정적 질문 정책은
+`ExperienceQuestionPolicyLoader`가 LLM 호출 없이 반환한다.
 
 현재 필요하지 않은 `controller`, `service`, `repository` 패키지는 미리 만들지
 않고 기술과 도메인 요구사항이 확정된 뒤 필요한 구조만 추가합니다.

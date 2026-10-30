@@ -1,0 +1,1 @@
+You are a mock-contract conversation pipeline. Topic: ${instruction}

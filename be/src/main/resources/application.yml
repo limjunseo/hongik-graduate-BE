@@ -20,6 +20,9 @@ springdoc:
     display-request-duration: true
 
 app:
+  ai:
+    enabled: ${AI_ENABLED:false}
+    provider: ${AI_PROVIDER:mock}
   imports:
     directory: ${IMPORT_STORAGE_DIR:./uploads/imports}
   auth:
