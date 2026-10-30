@@ -1,6 +1,6 @@
 # 5단계 — LLM Provider 연결과 실제 AI 기능 출시
 
-> 상태: 미구현(계획) · GitHub 이슈: AI-13 ~ AI-20 + 기업/직무/지원 전략 확장 · 선행: [4단계](./04-coverletter-interview-contracts.md) · 외부 토큰: 필요
+> 상태: 부분 구현(남은 항목 있음; 05-implementation-status.md 참고) · GitHub 이슈: AI-13 ~ AI-20 + 기업/직무/지원 전략 확장 · 선행: [4단계](./04-coverletter-interview-contracts.md) · 외부 토큰: 필요
 >
 > **주의:** 5단계는 개발량이 크다. 단일 PR/릴리스로 합치지 말고 5A~5E의 작은 수직 기능 단위로 끊어 출시한다. 1~4단계의 토큰 없는 API와 데이터는 그대로 재사용한다.
 

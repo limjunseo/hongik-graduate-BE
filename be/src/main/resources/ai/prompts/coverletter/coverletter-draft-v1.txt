@@ -3,4 +3,4 @@ REFERENCE_DATA_START
 ${context}
 REFERENCE_DATA_END
 USER_QUESTION: ${question}
-Return a coverletter-draft-v1 JSON object. The stage-4 implementation only creates a mock fixture.
+Return ONLY a valid coverletter-draft-v1 JSON object with fields: text (string), characterCount (Unicode code point count of text), warnings (array of strings), usedExperienceIds (array of UUID strings chosen ONLY from the reference data), schemaVersion (exactly "v1"). Respect the question's characterLimit. If evidence is insufficient, say so in warnings rather than inventing facts. Do not return markdown code fences.

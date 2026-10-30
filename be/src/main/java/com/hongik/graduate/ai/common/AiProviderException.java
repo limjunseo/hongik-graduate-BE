@@ -4,7 +4,7 @@ package com.hongik.graduate.ai.common;
 public final class AiProviderException extends RuntimeException {
     public enum Code {
         DISABLED, INVALID_REQUEST, TEMPLATE_NOT_FOUND,
-        INVALID_OUTPUT, PROVIDER_FAILURE, TIMEOUT
+        INVALID_OUTPUT, PROVIDER_FAILURE, RATE_LIMITED, TIMEOUT
     }
 
     private final Code code;

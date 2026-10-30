@@ -7,4 +7,4 @@ ORIGINAL_TEXT_START
 ${original}
 ORIGINAL_TEXT_END
 ADDITIONAL_REQUEST: ${instruction}
-Return a coverletter-revision-v1 JSON object; user must approve saving.
+Return ONLY a valid coverletter-revision-v1 JSON object with revisedText (string), changeReasons (array of strings), warnings (array of strings), and schemaVersion (exactly "v1"). Obey the question's characterLimit when possible. If facts are missing, warn without inventing them. Do not return markdown code fences; the user must approve saving.

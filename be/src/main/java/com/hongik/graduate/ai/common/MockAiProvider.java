@@ -89,7 +89,13 @@ public final class MockAiProvider implements AiProvider {
                         + "\",\"changeReasons\":[],\"warnings\":[\"MOCK_ONLY\"],\"schemaVersion\":\"v1\"}";
                 case "support-strategy-v1" -> "{\"strengths\":[],\"evidenceGaps\":[],\"nextActions\":[],"
                         + "\"schemaVersion\":\"v1\"}";
-                case "interview-question-v1" -> "{\"question\":\"" + marker
+                case "experience-summary-v1" -> "{\"schemaVersion\":\"v1\","
+                        + "\"situation\":null,\"task\":null,\"action\":null,"
+                        + "\"result\":null,\"role\":null,\"conflict\":null,\"learned\":null,"
+                        + "\"skills\":[],\"keywords\":[],\"evidenceSources\":[]}";                case "job-analysis-v1" -> "{\"requiredSkills\":[],\"preferredSkills\":[],"
+                        + "\"responsibilities\":[],\"coreCompetencies\":[],"
+                        + "\"keywords\":[],\"companyValues\":[],"
+                        + "\"evidence\":[],\"analysisStatus\":\"DRAFT\",\"schemaVersion\":\"v1\"}";                case "interview-question-v1" -> "{\"question\":\"" + marker
                         + "\",\"questionType\":\"COMMON\",\"evidence\":[],\"schemaVersion\":\"v1\"}";
                 case "interview-feedback-v1" -> "{\"feedback\":\"" + marker
                         + "\",\"followUpQuestion\":\"" + marker

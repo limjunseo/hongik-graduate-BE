@@ -22,6 +22,11 @@ public enum ErrorCode {
     EXPERIENCE_SUMMARY_NOT_FOUND(HttpStatus.NOT_FOUND, "구조화 경험 요약을 찾을 수 없습니다."),
     JOB_ANALYSIS_NOT_FOUND(HttpStatus.NOT_FOUND, "구조화 채용공고 분석을 찾을 수 없습니다."),
     COVER_LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "자기소개서를 찾을 수 없습니다."),
+    AI_DISABLED(HttpStatus.SERVICE_UNAVAILABLE, "AI generation is disabled."),
+    AI_PROVIDER_FAILURE(HttpStatus.BAD_GATEWAY, "AI provider is unavailable."),
+    AI_INVALID_OUTPUT(HttpStatus.BAD_GATEWAY, "AI returned an invalid response."),
+    AI_TIMEOUT(HttpStatus.GATEWAY_TIMEOUT, "AI provider timed out."),
+    AI_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "AI provider rate limit exceeded."),
     FORBIDDEN(HttpStatus.FORBIDDEN, "접근 권한이 없습니다."),
     INTERNAL_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "서버 내부 오류가 발생했습니다.");
 

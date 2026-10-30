@@ -11,6 +11,24 @@ spring:
       - optional:file:../.env-local[.properties]
   profiles:
     active: local
+  # Only the explicitly selected provider may create a remote model bean.
+  ai:
+    model:
+      chat: ${AI_PROVIDER:mock}
+      embedding: none
+      image: none
+      moderation: none
+      audio:
+        speech: none
+        transcription: none
+    openai:
+      api-key: ${AI_API_KEY:}
+      timeout: ${AI_TIMEOUT:30s}
+      max-retries: ${AI_MAX_RETRIES:2}
+      chat:
+        options:
+          model: ${AI_MODEL:gpt-4o-mini}
+          max-completion-tokens: ${AI_MAX_OUTPUT_TOKENS:2048}
 
 springdoc:
   api-docs:
@@ -23,6 +41,9 @@ app:
   ai:
     enabled: ${AI_ENABLED:false}
     provider: ${AI_PROVIDER:mock}
+    max-input-characters: ${AI_MAX_INPUT_CHARS:32000}
+    max-output-characters: ${AI_MAX_OUTPUT_CHARS:16000}
+    max-chat-messages: ${AI_MAX_CHAT_MESSAGES:30}
   imports:
     directory: ${IMPORT_STORAGE_DIR:./uploads/imports}
   auth:

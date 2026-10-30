@@ -38,6 +38,21 @@ public final class AiOutputValidator {
                 "evidenceGaps", AiOutputSchema.Kind.ARRAY,
                 "nextActions", AiOutputSchema.Kind.ARRAY,
                 "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("experience-summary-v1", new AiOutputSchema("experience-summary-v1", Map.of(
+                "skills", AiOutputSchema.Kind.ARRAY,
+                "keywords", AiOutputSchema.Kind.ARRAY,
+                "evidenceSources", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("job-analysis-v1", new AiOutputSchema("job-analysis-v1", Map.of(
+                "requiredSkills", AiOutputSchema.Kind.ARRAY,
+                "preferredSkills", AiOutputSchema.Kind.ARRAY,
+                "responsibilities", AiOutputSchema.Kind.ARRAY,
+                "coreCompetencies", AiOutputSchema.Kind.ARRAY,
+                "keywords", AiOutputSchema.Kind.ARRAY,
+                "companyValues", AiOutputSchema.Kind.ARRAY,
+                "evidence", AiOutputSchema.Kind.ARRAY,
+                "analysisStatus", AiOutputSchema.Kind.STRING,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
         rules.put("interview-question-v1", new AiOutputSchema("interview-question-v1", Map.of(
                 "question", AiOutputSchema.Kind.STRING,
                 "questionType", AiOutputSchema.Kind.STRING,

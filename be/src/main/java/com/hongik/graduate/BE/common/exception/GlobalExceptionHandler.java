@@ -44,6 +44,21 @@ public class GlobalExceptionHandler {
         return response(ErrorCode.EMAIL_ALREADY_EXISTS, request.getRequestURI());
     }
 
+    @ExceptionHandler(com.hongik.graduate.ai.common.AiProviderException.class)
+    public ResponseEntity<ErrorResponse> handleAi(
+            com.hongik.graduate.ai.common.AiProviderException exception,
+            HttpServletRequest request) {
+        ErrorCode code = switch (exception.code()) {
+            case DISABLED -> ErrorCode.AI_DISABLED;
+            case INVALID_REQUEST -> ErrorCode.INVALID_REQUEST;
+            case TEMPLATE_NOT_FOUND -> ErrorCode.INTERNAL_SERVER_ERROR;
+            case INVALID_OUTPUT -> ErrorCode.AI_INVALID_OUTPUT;
+            case PROVIDER_FAILURE -> ErrorCode.AI_PROVIDER_FAILURE;
+            case RATE_LIMITED -> ErrorCode.AI_RATE_LIMITED;
+            case TIMEOUT -> ErrorCode.AI_TIMEOUT;
+        };
+        return response(code, request.getRequestURI());
+    }
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(
             Exception exception,
