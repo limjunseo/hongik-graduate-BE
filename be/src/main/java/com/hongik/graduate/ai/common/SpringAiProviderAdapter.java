@@ -8,6 +8,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.TimeUnit;
 
+import com.openai.errors.OpenAIServiceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ai.chat.messages.AssistantMessage;
@@ -22,7 +23,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
-import org.springframework.web.client.ResourceAccessException;
 
 /** Isolates Spring AI and remote failures from the provider-neutral application port. */
 @Component
@@ -136,6 +136,14 @@ public final class SpringAiProviderAdapter implements AiProvider {
 
     static AiProviderException mapFailure(Throwable error) {
         for (Throwable current = error; current != null; current = current.getCause()) {
+            if (current instanceof OpenAIServiceException status) {
+                return new AiProviderException(
+                        status.statusCode() == 429
+                                ? AiProviderException.Code.RATE_LIMITED
+                                : AiProviderException.Code.PROVIDER_FAILURE,
+                        status.statusCode() == 429
+                                ? "AI provider rate limit exceeded" : "AI provider request failed");
+            }
             if (current instanceof HttpStatusCodeException status) {
                 if (status.getStatusCode().value() == 429) {
                     return new AiProviderException(AiProviderException.Code.RATE_LIMITED,
@@ -146,8 +154,7 @@ public final class SpringAiProviderAdapter implements AiProvider {
             }
             if (current instanceof SocketTimeoutException
                     || current instanceof HttpTimeoutException
-                    || current instanceof TimeoutException
-                    || current instanceof ResourceAccessException) {
+                    || current instanceof TimeoutException) {
                 return new AiProviderException(AiProviderException.Code.TIMEOUT,
                         "AI provider request timed out");
             }

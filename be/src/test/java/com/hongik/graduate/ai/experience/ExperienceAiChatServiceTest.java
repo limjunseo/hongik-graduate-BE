@@ -15,6 +15,8 @@ import com.hongik.graduate.BE.experience.repository.ExperienceRepository;
 import com.hongik.graduate.ai.common.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 
 class ExperienceAiChatServiceTest {
     private final UUID member = UUID.randomUUID(), experience = UUID.randomUUID();
@@ -22,8 +24,9 @@ class ExperienceAiChatServiceTest {
     private final ExperienceAiChatMessageRepository messages =
             mock(ExperienceAiChatMessageRepository.class);
     private final AiGateway gateway = mock(AiGateway.class);
+    private final EntityManager entityManager = mock(EntityManager.class);
     private final ExperienceAiChatService service =
-            new ExperienceAiChatService(experiences, messages, gateway);
+            new ExperienceAiChatService(experiences, messages, gateway, entityManager);
 
     private void owned() {
         Experience item = new Experience(member, "STAR", "A project", "CONVERSATION", null, null);
@@ -53,6 +56,7 @@ class ExperienceAiChatServiceTest {
         var stored = ArgumentCaptor.forClass(List.class);
         verify(messages).saveAll(stored.capture());
         assertThat(stored.getValue()).hasSize(2);
+        verify(entityManager).lock(any(Experience.class), eq(LockModeType.PESSIMISTIC_WRITE));
     }
 
     @Test
@@ -99,4 +103,19 @@ class ExperienceAiChatServiceTest {
                 .isInstanceOf(BusinessException.class);
         verifyNoInteractions(gateway);
     }
-}
+
+    @Test
+    void locksOwnerRowBeforeReadingHistoryOrCallingProvider() {
+        owned();
+        when(messages.findByExperienceIdOrderBySequenceNoAsc(experience))
+                .thenReturn(List.of());
+        when(gateway.chat(any())).thenReturn(new AiResponse(AiResponse.Status.SUCCESS,
+                "mock", true, "reply", null, "id-serial", new AiUsage(null, null)));
+        service.send(member, experience,
+                new ExperienceAiChatService.SendInput("first", "id-serial"));
+        var order = inOrder(entityManager, messages, gateway);
+        order.verify(entityManager).lock(any(Experience.class), eq(LockModeType.PESSIMISTIC_WRITE));
+        order.verify(messages).findByExperienceIdOrderBySequenceNoAsc(experience);
+        order.verify(gateway).chat(any());
+        order.verify(messages).saveAll(any());
+    }}

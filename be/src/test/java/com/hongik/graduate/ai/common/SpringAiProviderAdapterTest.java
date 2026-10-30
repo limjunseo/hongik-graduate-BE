@@ -150,4 +150,24 @@ class SpringAiProviderAdapterTest {
         assertThatThrownBy(invocation::run).isInstanceOf(AiProviderException.class)
                 .extracting("code").isEqualTo(code);
     }
-}
+
+    @Test
+    void mapsOpenAiSdkHttp429AndOtherServiceErrors() {
+        com.openai.errors.OpenAIServiceException limited =
+                mock(com.openai.errors.OpenAIServiceException.class);
+        when(limited.statusCode()).thenReturn(429);
+        assertThat(SpringAiProviderAdapter.mapFailure(
+                new IllegalStateException("sensitive", limited)).code())
+                .isEqualTo(AiProviderException.Code.RATE_LIMITED);
+
+        com.openai.errors.OpenAIServiceException unauthorized =
+                mock(com.openai.errors.OpenAIServiceException.class);
+        when(unauthorized.statusCode()).thenReturn(401);
+        AiProviderException mapped = SpringAiProviderAdapter.mapFailure(unauthorized);
+        assertThat(mapped.code()).isEqualTo(AiProviderException.Code.PROVIDER_FAILURE);
+        assertThat(mapped.getMessage()).doesNotContain("sensitive");
+
+        assertThat(SpringAiProviderAdapter.mapFailure(
+                new ResourceAccessException("connection refused")).code())
+                .isEqualTo(AiProviderException.Code.PROVIDER_FAILURE);
+    }}

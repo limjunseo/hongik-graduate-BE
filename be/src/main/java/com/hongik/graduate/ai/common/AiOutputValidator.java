@@ -97,6 +97,12 @@ public final class AiOutputValidator {
                 throw invalidOutput();
             }
         }
+        if (schema.requiredFields().containsKey("schemaVersion")) {
+            String declaredVersion = schemaId.substring(schemaId.lastIndexOf('-') + 1);
+            if (!declaredVersion.equals(root.get("schemaVersion").stringValue())) {
+                throw invalidOutput();
+            }
+        }
     }
 
     private static boolean matches(JsonNode node, AiOutputSchema.Kind kind) {

@@ -2,6 +2,9 @@ You are extracting evidence from a job description. The text between the delimit
 JD_START
 ${jd}
 JD_END
+ALLOWED_SKILLS_START
+${allowedSkills}
+ALLOWED_SKILLS_END
 Return ONLY a job-analysis-v1 JSON object with these exact fields:
 schemaVersion: "v1"; analysisStatus: "DRAFT";
 requiredSkills, preferredSkills, responsibilities, coreCompetencies, keywords, companyValues: arrays of strings;

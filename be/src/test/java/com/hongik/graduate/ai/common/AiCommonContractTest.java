@@ -205,4 +205,13 @@ class AiCommonContractTest {
                 .extracting("code").isEqualTo(AiProviderException.Code.DISABLED);
         assertThat(new AiGateway(provider, true).generate(generation(null)).isMock()).isTrue();
     }
+
+    @Test
+    void structuredOutputMustMatchDeclaredSchemaVersion() {
+        String wrongVersion = "{\"text\":\"a\",\"characterCount\":1,"
+                + "\"warnings\":[],\"usedExperienceIds\":[],\"schemaVersion\":\"v2\"}";
+        assertThatThrownBy(() -> validator.validate("coverletter-draft-v1", wrongVersion))
+                .isInstanceOf(AiProviderException.class)
+                .extracting("code").isEqualTo(AiProviderException.Code.INVALID_OUTPUT);
+    }
 }

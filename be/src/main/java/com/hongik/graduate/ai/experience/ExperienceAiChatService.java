@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
+
 import com.hongik.graduate.BE.common.exception.BusinessException;
 import com.hongik.graduate.BE.common.exception.ErrorCode;
 import com.hongik.graduate.BE.experience.domain.Experience;
@@ -21,12 +24,15 @@ public class ExperienceAiChatService {
     private final ExperienceRepository experiences;
     private final ExperienceAiChatMessageRepository messages;
     private final AiGateway gateway;
+    private final EntityManager entityManager;
 
     public ExperienceAiChatService(ExperienceRepository experiences,
-            ExperienceAiChatMessageRepository messages, AiGateway gateway) {
+            ExperienceAiChatMessageRepository messages, AiGateway gateway,
+            EntityManager entityManager) {
         this.experiences = experiences;
         this.messages = messages;
         this.gateway = gateway;
+        this.entityManager = entityManager;
     }
 
     public record SendInput(String message, String requestId) { }
@@ -59,6 +65,9 @@ public class ExperienceAiChatService {
                 && !input.requestId().matches("[A-Za-z0-9_.:-]{1,128}")) {
             throw new BusinessException(ErrorCode.INVALID_REQUEST);
         }
+        // Serialize concurrent writes for this experience across application instances.
+        // The lock remains held until both turns are committed, including the model call.
+        entityManager.lock(experience, LockModeType.PESSIMISTIC_WRITE);
         String idempotencyKey = input.requestId() == null
                 ? UUID.randomUUID().toString() : input.requestId();
         List<ExperienceAiChatMessage> stored = messages.findByExperienceIdOrderBySequenceNoAsc(id);

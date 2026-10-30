@@ -39,7 +39,8 @@ public class ExperienceAiSummaryService {
                 .stream().filter(turn -> turn.role.equals("USER") || !turn.mock).toList();
         boolean hasQuickAnswers = List.of(
                 val(original.situation()), val(original.task()), val(original.action()),
-                val(original.result()), val(original.role())).stream().anyMatch(s -> !s.isBlank());
+                val(original.result()), val(original.role()), val(original.conflict()),
+                val(original.learned())).stream().anyMatch(s -> !s.isBlank());
         if (!hasQuickAnswers && conversation.stream().noneMatch(t -> t.role.equals("USER"))) {
             throw new BusinessException(ErrorCode.INVALID_REQUEST);
         }

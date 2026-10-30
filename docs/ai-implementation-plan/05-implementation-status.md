@@ -42,3 +42,16 @@ Run `cd be && .\mvnw.cmd verify` without API keys for offline unit/integration t
 - **5D:** persistent per-question editing conversation threads and question auto-classification; preview response does not imply a saved answer.
 - **5E / AI-20:** persistent interview sessions, turn-by-turn question/answer/feedback APIs and their own integration tests. Interview prompt/context/request contracts exist from phase 4, but this beta service is not implemented here.
 - Production DB migration strategy for the new `experience_ai_chat_messages` table and concurrency controls for parallel messages per experience. Local integration tests use the application's configured test schema.
+
+
+## AI internal review fixes (2026-10-31)
+
+- The OpenAI SDK's own 429 error type is now mapped to `RATE_LIMITED` rather than the generic provider failure; non-timeout connectivity errors are no longer falsely labeled timeouts.
+- The shared response validator rejects JSON output whose `schemaVersion` disagrees with the declared versioned schema.
+- The JD analysis prompt now contains the actual canonical skill taxonomy. Any nonempty AI-extracted facts require at least one JD evidence span; the pre-existing JD range/substring validator checks each supplied citation before storage. The service checks that an existing user-confirmed analysis has not been replaced both before the remote request and before save.
+- AI experience chat acquires a database pessimistic lock on the owning experience before checking request idempotency and appending its USER/ASSISTANT pair, serializing concurrent sends for one experience. The lock is held during the remote call, so model latency can cause database contention under load.
+- AI experience summarization accepts the conflict/learned fields as legitimate source facts when no other quick-answer fields exist.
+
+**Verification:** Java 17 Maven verify; dedicated tests of JSON schema versions, SDK rate-limit error mapping, evidence handling, confirmed draft protection, and concurrent H2 chat writes.
+
+**Remaining limitations:** No paid live model tests; AI output evidence does not establish semantic truth; provider-wide and per-user quotas are not implemented; confirmed-JD protection should ultimately be made atomic against concurrent manual edits; long-running AI calls currently hold experience row locks. The interview session/feedback application workflow remains out of scope.
