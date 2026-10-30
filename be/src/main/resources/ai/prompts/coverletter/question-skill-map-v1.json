@@ -1,0 +1,40 @@
+{
+  "version": "v1",
+  "mapping": {
+    "MOTIVATION": [
+      "initiative",
+      "responsibility"
+    ],
+    "JOB_COMPETENCY": [
+      "technical_skill",
+      "backend",
+      "problem_solving"
+    ],
+    "COLLABORATION": [
+      "collaboration",
+      "communication",
+      "conflict_resolution"
+    ],
+    "PROBLEM_SOLVING": [
+      "problem_solving",
+      "analytical_thinking",
+      "initiative"
+    ],
+    "CHALLENGE": [
+      "adaptability",
+      "initiative"
+    ],
+    "STRENGTH_WEAKNESS": [
+      "responsibility",
+      "communication"
+    ],
+    "GROWTH": [
+      "adaptability",
+      "responsibility"
+    ],
+    "FUTURE_PLAN": [
+      "initiative",
+      "technical_skill"
+    ]
+  }
+}

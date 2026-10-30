@@ -10,8 +10,10 @@ import java.util.*;
 public class JobPostingService {
  private final CoverLetterRepository covers;
  private final JobPostingRepository postings;
- public JobPostingService(CoverLetterRepository covers,JobPostingRepository postings){
-  this.covers=covers;this.postings=postings;
+ private final com.hongik.graduate.ai.job.JobAnalysisRepository analyses;
+ public JobPostingService(CoverLetterRepository covers,JobPostingRepository postings,
+ com.hongik.graduate.ai.job.JobAnalysisRepository analyses){
+  this.covers=covers;this.postings=postings;this.analyses=analyses;
  }
  public record Input(String url,String jdOriginal,String qualifications,String preferences,String hiringProcess){}
  private BusinessException invalid(){return new BusinessException(ErrorCode.INVALID_REQUEST);}
@@ -48,6 +50,11 @@ public class JobPostingService {
   String preferences=validText(input.preferences());
   String process=validText(input.hiringProcess());
   JobPosting posting=postings.findByCoverLetterId(cover).orElseGet(()->new JobPosting(cover));
+  if(posting.id!=null && (!Objects.equals(posting.url,url)
+   ||!Objects.equals(posting.jdOriginal,original)
+   ||!Objects.equals(posting.qualifications,qualifications)
+   ||!Objects.equals(posting.preferences,preferences)
+   ||!Objects.equals(posting.hiringProcess,process)))analyses.deleteById(posting.id);
   posting.url=url;
   posting.jdOriginal=original;
   posting.qualifications=qualifications;
@@ -57,6 +64,7 @@ public class JobPostingService {
  }
  public void delete(UUID user,UUID cover){
   own(user,cover);
+  postings.findByCoverLetterId(cover).ifPresent(p->analyses.deleteById(p.id));
   postings.deleteByCoverLetterId(cover);
  }
 }

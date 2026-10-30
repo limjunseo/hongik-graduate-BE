@@ -78,6 +78,20 @@ AI 없이 작동하는 구조화된 경험 데이터 기반을 제공합니다.
 `ImportExperienceCandidateServiceTest`. 전체 `.\mvnw.cmd verify` 실행.
 실제 LLM 토큰, 원격 모델, UI 자동 적용은 필요하지 않습니다.
 
+## JD 분석 계약 · 경험 매칭 (3단계)
+
+- 기존 `job_postings` 원문 저장과 별개로 `job_analyses`에 사용자 입력의 구조화된 분석(v1)을 저장합니다.
+- `PUT/GET /api/cover-letters/{coverId}/posting/analysis`: JWT로 소유권 확인, 역량 taxonomy 검증,
+  JD 원문에 대한 정확한 offset/quote 근거 검증. 아직 LLM이 JD를 자동 분석하지 않습니다.
+- `GET /api/cover-letters/{coverId}/experience-recommendations`: 본인 구조화 경험의 필수 역량
+  교집합 / JD 필수 역량 개수 × 100 (반올림). 빈 필수 역량은 `NOT_SCORABLE`.
+  규칙 기반 결과이며 합격 확률 또는 의미적 유사도 점수가 아닙니다.
+- `GET /api/cover-letter-question-types`: 자소서 문항 유형 8종 및 추천 역량 정책(v1) 조회.
+  문항 자동 분류는 하지 않습니다.
+- 원문 공고 수정·삭제, 자소서 삭제 시 저장된 분석 결과를 무효화/삭제합니다.
+- `CompanyAnalysis`/`RoleAnalysis`는 출처/스키마 계약만 정의하며 실제 기업 자료 수집은 5단계입니다.
+- 운영 환경은 `job_analyses` DB 마이그레이션이 별도로 필요합니다.
+
 ## Experience Question Policy
 
 경험 질문 정책은 LLM과 무관한 정적 도메인 정책입니다. Spring Bean으로
