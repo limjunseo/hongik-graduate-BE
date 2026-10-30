@@ -1,0 +1,82 @@
+{
+  "version": "v1",
+  "skills": [
+    {
+      "code": "problem_solving",
+      "label": "문제 해결",
+      "aliases": [
+        "문제해결"
+      ]
+    },
+    {
+      "code": "communication",
+      "label": "커뮤니케이션",
+      "aliases": [
+        "의사소통"
+      ]
+    },
+    {
+      "code": "collaboration",
+      "label": "협업",
+      "aliases": [
+        "팀워크"
+      ]
+    },
+    {
+      "code": "leadership",
+      "label": "리더십",
+      "aliases": [
+        "팀 리딩"
+      ]
+    },
+    {
+      "code": "initiative",
+      "label": "주도성",
+      "aliases": [
+        "자발성"
+      ]
+    },
+    {
+      "code": "responsibility",
+      "label": "책임감",
+      "aliases": [
+        "오너십"
+      ]
+    },
+    {
+      "code": "technical_skill",
+      "label": "기술 역량",
+      "aliases": [
+        "기술 활용"
+      ]
+    },
+    {
+      "code": "analytical_thinking",
+      "label": "분석적 사고",
+      "aliases": [
+        "분석력"
+      ]
+    },
+    {
+      "code": "adaptability",
+      "label": "적응력",
+      "aliases": [
+        "변화 대응"
+      ]
+    },
+    {
+      "code": "conflict_resolution",
+      "label": "갈등 해결",
+      "aliases": [
+        "갈등 조율"
+      ]
+    },
+    {
+      "code": "backend",
+      "label": "백엔드 개발",
+      "aliases": [
+        "서버 개발"
+      ]
+    }
+  ]
+}

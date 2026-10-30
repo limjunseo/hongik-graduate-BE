@@ -9,9 +9,11 @@ public class ExperienceService {
  private final ExperienceRepository experiences;private final ExperienceTagRepository tags;
  private final ExperienceQuestionRepository questions;private final ExperienceAnswerRepository answers;
  private final com.hongik.graduate.BE.coverletter.domain.QuestionExperienceLinkRepository links;
+ private final com.hongik.graduate.ai.experience.ExperienceSummaryRepository structuredSummaries;
  public ExperienceService(ExperienceRepository e,ExperienceTagRepository t,ExperienceQuestionRepository q,ExperienceAnswerRepository a,
- com.hongik.graduate.BE.coverletter.domain.QuestionExperienceLinkRepository links){
- experiences=e;tags=t;questions=q;answers=a;this.links=links;}
+ com.hongik.graduate.BE.coverletter.domain.QuestionExperienceLinkRepository links,
+ com.hongik.graduate.ai.experience.ExperienceSummaryRepository structuredSummaries){
+ experiences=e;tags=t;questions=q;answers=a;this.links=links;this.structuredSummaries=structuredSummaries;}
  public record Create(String title,String tagCode,String creationMethod,LocalDate startedAt,LocalDate endedAt){}
  public record Patch(String title,String summary,LocalDate startedAt,LocalDate endedAt){}
  public record AnswerInput(UUID questionId,String customLabel,String content,Integer displayOrder){}
@@ -96,5 +98,5 @@ public class ExperienceService {
  for(ExperienceQuestion q:questions.findByTagCodeAndActiveTrueOrderByDisplayOrderAsc(e.tagCode))
  if(q.required&&!filled.contains(q.id))throw invalid();
  }
- public void delete(UUID user,UUID id){own(user,id);links.deleteByExperienceId(id);answers.deleteByExperienceId(id);experiences.deleteById(id);}
+ public void delete(UUID user,UUID id){own(user,id);links.deleteByExperienceId(id);structuredSummaries.deleteById(id);answers.deleteByExperienceId(id);experiences.deleteById(id);}
 }

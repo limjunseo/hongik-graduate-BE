@@ -31,3 +31,11 @@ URL 수집은 공개 HTTP(S) HTML에 한정한다. Jsoup으로 제목과 본문 
 
 ## 검증 범위
 PDF 업로드·다운로드·접근 제한, URL 내부 주소 차단을 테스트한다. 공개 Notion 및 다양한 블로그 실제 본문 추출 성공률, DNS 재바인딩 방어 및 사이트별 파싱 품질은 추가 검증이 필요하다.
+
+## 2단계: 근거 문단 후보 추출 (구현)
+- `GET /api/imports/{id}/experience-candidates` (JWT): 본인 자료에서 문단 후보 반환. 기존 업로드/URL 수집 API는 수정하지 않는다.
+- URL은 기존 `ImportedSource.collectedText`에서, PDF는 보관한 원본 파일을 PDFBox 3.0.5로 읽어 페이지 단위로 추출한다. 원본 PDF 자체를 변경하지 않는다.
+- 후보는 `sourceId`, `sourceType`, `location`(예: `page:1:paragraph:1` 또는 `url:paragraph:1`), `quote`, `status=REVIEW_REQUIRED`를 가진다. 내용은 원문 일부로 한정하며 S/T/A/R을 임의 구성하지 않는다.
+- 총 추출은 최대 60페이지/6만 글자/100문단 후보, 문단 인용은 1000자 이하로 제한한다. OCR·로그인 필요 Notion·시맨틱 추출은 미지원; 텍스트 없는 PDF는 `NO_TEXT`.
+- 구조화 경험 저장 시 `evidenceSources[]`는 동일 회원이 소유한 자료의 동일 `location`·`quote` 후보와 일치해야 한다. 사용자 승인을 거친 `PUT /api/experiences/{id}/structured-summary`에서만 실제 경험 데이터에 반영한다.
+- PDFBox 추가 의존성은 운영 배포 시 CVE 점검·리소스 제한·운영 DB 마이그레이션 검토가 필요하다. PDF 파싱이 실패하면 원본 파일은 계속 보존한다.
