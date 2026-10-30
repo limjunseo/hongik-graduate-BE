@@ -80,10 +80,25 @@ public final class MockAiProvider implements AiProvider {
             content = "[MOCK ONLY] " + request.taskType()
                     + " turns=" + request.messages().size() + " fingerprint=" + fingerprint;
         } else {
-            content = "{\"taskType\":\"" + request.taskType()
-                    + "\",\"message\":\"MOCK ONLY - NOT AI GENERATED\""
-                    + ",\"fingerprint\":\"" + fingerprint
-                    + "\",\"turns\":" + request.messages().size() + "}";
+            String marker = "[MOCK ONLY - NOT AI GENERATED]";
+            content = switch (request.outputSchemaId()) {
+                case "coverletter-draft-v1" -> "{\"text\":\"" + marker
+                        + "\",\"characterCount\":" + marker.length()
+                        + ",\"warnings\":[\"MOCK_ONLY\"],\"usedExperienceIds\":[],\"schemaVersion\":\"v1\"}";
+                case "coverletter-revision-v1" -> "{\"revisedText\":\"" + marker
+                        + "\",\"changeReasons\":[],\"warnings\":[\"MOCK_ONLY\"],\"schemaVersion\":\"v1\"}";
+                case "support-strategy-v1" -> "{\"strengths\":[],\"evidenceGaps\":[],\"nextActions\":[],"
+                        + "\"schemaVersion\":\"v1\"}";
+                case "interview-question-v1" -> "{\"question\":\"" + marker
+                        + "\",\"questionType\":\"COMMON\",\"evidence\":[],\"schemaVersion\":\"v1\"}";
+                case "interview-feedback-v1" -> "{\"feedback\":\"" + marker
+                        + "\",\"followUpQuestion\":\"" + marker
+                        + "\",\"evidence\":[],\"schemaVersion\":\"v1\"}";
+                default -> "{\"taskType\":\"" + request.taskType()
+                        + "\",\"message\":\"MOCK ONLY - NOT AI GENERATED\""
+                        + ",\"fingerprint\":\"" + fingerprint
+                        + "\",\"turns\":" + request.messages().size() + "}";
+            };
         }
         validator.validate(request.outputSchemaId(), content);
         return new AiResponse(AiResponse.Status.SUCCESS, "mock", true,

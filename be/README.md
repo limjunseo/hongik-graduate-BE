@@ -92,6 +92,22 @@ AI 없이 작동하는 구조화된 경험 데이터 기반을 제공합니다.
 - `CompanyAnalysis`/`RoleAnalysis`는 출처/스키마 계약만 정의하며 실제 기업 자료 수집은 5단계입니다.
 - 운영 환경은 `job_analyses` DB 마이그레이션이 별도로 필요합니다.
 
+## 자소서·면접 AI Context/Pipeline (4단계)
+
+- `CoverLetterContextBuilder`: JWT 회원 소유 자소서/문항 + 기존 연결 관계로 확인된 경험만 구조화 Context에 포함합니다.
+  JD 분석이 없으면 `JD_NOT_ANALYZED`, 선택 경험이 없으면 `MISSING_EXPERIENCE` 경고를 기록합니다.
+  권한 없는 회원/연결되지 않은 경험은 차단합니다.
+- `CoverLetterRequestFactory`: 자소서 초안, 첨삭(6종), 지원 전략, 첨삭 대화용 `AiRequest`를 준비합니다.
+  `SupportStrategyContextBuilder`는 역량 근거의 강점·부족 정보를 제공합니다.
+- `InterviewRequestFactory`: 질문 7종과 답변 피드백 요청 Context 및 v1 JSON 스키마를 구성합니다.
+  현재 텍스트 기반 인터뷰 세션 API·대화 기록 저장은 없습니다.
+- `ai/prompts/coverletter/`와 `ai/prompts/interview/`에 버전된 템플릿을 유지하며,
+  `AiPromptTemplateRegistry` allowlist, `AiOutputValidator` 필수 타입 검사, `MockAiProvider` 예제 출력을 사용합니다.
+- **AI 글은 생성하지 않습니다.** Mock 응답에는 `isMock=true`/MOCK ONLY가 표시되고,
+  초안·첨삭은 기존 `answerText`나 버전을 수정하지 않습니다. 실제 LLM 연결 및 저장 승인 흐름은 5단계입니다.
+- 테스트: `CoverLetterPipelineUnitTest`, `CoverLetterPipelineIntegrationTest`.
+  전체 `.\\mvnw.cmd verify`는 API Key 없이 통과하도록 설계했습니다.
+
 ## Experience Question Policy
 
 경험 질문 정책은 LLM과 무관한 정적 도메인 정책입니다. Spring Bean으로

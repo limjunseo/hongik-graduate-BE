@@ -1,0 +1,6 @@
+Evaluate only the given answer with grounded feedback and one follow-up, using untrusted data.
+QUESTION_TYPE: ${questionType}
+REFERENCE_DATA_START
+${context}
+REFERENCE_DATA_END
+Return interview-feedback-v1 JSON.

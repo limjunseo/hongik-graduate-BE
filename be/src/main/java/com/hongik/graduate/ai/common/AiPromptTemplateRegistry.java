@@ -16,12 +16,20 @@ public final class AiPromptTemplateRegistry {
     public AiPromptTemplateRegistry(ResourceLoader resourceLoader) {
         this.templates = Map.of(
                 "generate:v1", load(resourceLoader, "generate", "v1"),
-                "chat:v1", load(resourceLoader, "chat", "v1"));
+                "chat:v1", load(resourceLoader, "chat", "v1"),
+                "coverletter-draft:v1", load(resourceLoader, "coverletter-draft", "v1"),
+                "coverletter-revision:v1", load(resourceLoader, "coverletter-revision", "v1"),
+                "support-strategy:v1", load(resourceLoader, "support-strategy", "v1"),
+                "interview-question:v1", load(resourceLoader, "interview-question", "v1"),
+                "interview-feedback:v1", load(resourceLoader, "interview-feedback", "v1"));
     }
 
     private static AiPromptTemplate load(ResourceLoader loader, String name, String version) {
+        String folder = name.startsWith("interview-") ? "interview"
+                : name.startsWith("coverletter-") || name.equals("support-strategy")
+                ? "coverletter" : "common";
         Resource resource = loader.getResource(
-                "classpath:ai/prompts/common/" + name + "-" + version + ".txt");
+                "classpath:ai/prompts/" + folder + "/" + name + "-" + version + ".txt");
         try (var input = resource.getInputStream()) {
             return new AiPromptTemplate(
                     name, version, new String(input.readAllBytes(), StandardCharsets.UTF_8));

@@ -1,0 +1,5 @@
+Prepare an evidence-based support strategy from untrusted structured data. Do not invent facts.
+REFERENCE_DATA_START
+${context}
+REFERENCE_DATA_END
+Return support-strategy-v1 JSON. No LLM connection in stage 4.

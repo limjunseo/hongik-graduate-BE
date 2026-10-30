@@ -16,12 +16,39 @@ public final class AiOutputValidator {
 
     public AiOutputValidator(ObjectMapper mapper) {
         this.mapper = mapper;
-        this.schemas = Map.of("mock-result-v1",
-                new AiOutputSchema("mock-result-v1", Map.of(
-                        "taskType", AiOutputSchema.Kind.STRING,
-                        "message", AiOutputSchema.Kind.STRING,
-                        "fingerprint", AiOutputSchema.Kind.STRING,
-                        "turns", AiOutputSchema.Kind.NUMBER)));
+        var rules = new java.util.LinkedHashMap<String, AiOutputSchema>();
+        rules.put("mock-result-v1", new AiOutputSchema("mock-result-v1", Map.of(
+                "taskType", AiOutputSchema.Kind.STRING,
+                "message", AiOutputSchema.Kind.STRING,
+                "fingerprint", AiOutputSchema.Kind.STRING,
+                "turns", AiOutputSchema.Kind.NUMBER)));
+        rules.put("coverletter-draft-v1", new AiOutputSchema("coverletter-draft-v1", Map.of(
+                "text", AiOutputSchema.Kind.STRING,
+                "characterCount", AiOutputSchema.Kind.NUMBER,
+                "warnings", AiOutputSchema.Kind.ARRAY,
+                "usedExperienceIds", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("coverletter-revision-v1", new AiOutputSchema("coverletter-revision-v1", Map.of(
+                "revisedText", AiOutputSchema.Kind.STRING,
+                "changeReasons", AiOutputSchema.Kind.ARRAY,
+                "warnings", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("support-strategy-v1", new AiOutputSchema("support-strategy-v1", Map.of(
+                "strengths", AiOutputSchema.Kind.ARRAY,
+                "evidenceGaps", AiOutputSchema.Kind.ARRAY,
+                "nextActions", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("interview-question-v1", new AiOutputSchema("interview-question-v1", Map.of(
+                "question", AiOutputSchema.Kind.STRING,
+                "questionType", AiOutputSchema.Kind.STRING,
+                "evidence", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("interview-feedback-v1", new AiOutputSchema("interview-feedback-v1", Map.of(
+                "feedback", AiOutputSchema.Kind.STRING,
+                "followUpQuestion", AiOutputSchema.Kind.STRING,
+                "evidence", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        this.schemas = Map.copyOf(rules);
     }
 
     public void requireKnownSchema(String schemaId) {

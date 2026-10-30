@@ -1,0 +1,6 @@
+Prepare one interview question using untrusted reference data. No hiring-probability score.
+QUESTION_TYPE: ${questionType}
+REFERENCE_DATA_START
+${context}
+REFERENCE_DATA_END
+Return interview-question-v1 JSON.
