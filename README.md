@@ -35,3 +35,11 @@ cd be
 Windows PowerShell에서는 `.\mvnw.cmd verify`를 사용합니다.
 
 자세한 디렉터리 사용 원칙은 [`SKILL.md`](./SKILL.md)를 참고하세요.
+
+## AI 기능 (모의면접/운영 쿼터 제외)
+
+경험 채팅·추가 질문·요약, JD/기업/직무 분석, 지원 전략,
+자기소개서 문항 자동 분류·초안·첨삭·문항별 첨삭 대화를 지원합니다.
+`be/.env-local`에 `AI_API_KEY`만 넣으면 OpenAI Provider를 자동으로 활성화합니다.
+실행과 API 입력/주의사항은 [`docs/AI_READY_GUIDE.md`](./docs/AI_READY_GUIDE.md)를 참고하세요.
+실제 유료 API 호출을 수반하는 검증은 키를 넣은 이후에만 가능합니다.

@@ -36,6 +36,10 @@ public class CoverLetterAiService {
             List<UUID> usedExperienceIds, List<String> changeReasons,
             String provider, boolean isMock, String promptVersion, String correlationId) { }
 
+    public record StrategyPreview(List<String> strengths, List<String> evidenceGaps,
+            List<String> nextActions, List<String> warnings,
+            String provider, boolean isMock, String promptVersion, String correlationId) { }
+
     public Preview draft(UUID member, UUID cover, UUID question, DraftInput input) {
         if (input == null || input.questionType() == null || input.experienceIds() == null) {
             throw new BusinessException(ErrorCode.INVALID_REQUEST);
@@ -86,6 +90,25 @@ public class CoverLetterAiService {
         return new Preview(revision.revisedText(), count, limit, List.copyOf(warnings),
                 List.of(), revision.changeReasons(), response.provider(),
                 response.isMock(), request.promptVersion(), response.correlationId());
+    }
+
+    public StrategyPreview strategy(UUID member, UUID cover, UUID question, DraftInput input) {
+        if (input == null || input.questionType() == null || input.experienceIds() == null) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST);
+        }
+        var request = requests.prepareSupportStrategy(member, cover, question,
+                input.questionType(), input.experienceIds(), UUID.randomUUID().toString());
+        AiResponse response = gateway.generate(request);
+        try {
+            SupportStrategyResult strategy = mapper.readValue(response.content(), SupportStrategyResult.class);
+            return new StrategyPreview(strategy.strengths(), strategy.evidenceGaps(),
+                    strategy.nextActions(),
+                    response.isMock() ? List.of("MOCK_ONLY") : List.of("REVIEW_SUGGESTIONS"),
+                    response.provider(), response.isMock(), request.promptVersion(),
+                    response.correlationId());
+        } catch (RuntimeException exception) {
+            throw invalidOutput();
+        }
     }
 
     private int characterLimit(UUID cover, UUID question) {

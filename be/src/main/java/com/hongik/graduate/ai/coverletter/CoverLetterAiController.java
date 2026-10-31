@@ -17,9 +17,27 @@ import org.springframework.web.bind.annotation.RestController;
 @io.swagger.v3.oas.annotations.security.SecurityRequirement(name = "bearerAuth")
 public class CoverLetterAiController {
     private final CoverLetterAiService service;
+    private final QuestionAnalysisAiService classifier;
 
-    public CoverLetterAiController(CoverLetterAiService service) {
+    public CoverLetterAiController(CoverLetterAiService service,
+            QuestionAnalysisAiService classifier) {
         this.service = service;
+        this.classifier = classifier;
+    }
+
+    @PostMapping("/analyze")
+    public ApiResponse<?> analyze(@AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID coverId, @PathVariable UUID questionId) {
+        return ApiResponse.success(classifier.classify(
+                UUID.fromString(jwt.getSubject()), coverId, questionId));
+    }
+
+    @PostMapping("/strategy")
+    public ApiResponse<?> strategy(@AuthenticationPrincipal Jwt jwt,
+            @PathVariable UUID coverId, @PathVariable UUID questionId,
+            @RequestBody CoverLetterAiService.DraftInput request) {
+        return ApiResponse.success(service.strategy(
+                UUID.fromString(jwt.getSubject()), coverId, questionId, request));
     }
 
     @PostMapping("/draft")

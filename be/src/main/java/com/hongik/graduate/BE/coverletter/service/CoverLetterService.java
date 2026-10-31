@@ -10,8 +10,9 @@ public class CoverLetterService {
  private final QuestionExperienceLinkRepository links;
  private final JobPostingRepository postings;
  private final com.hongik.graduate.ai.job.JobAnalysisRepository analyses;
+ private final com.hongik.graduate.ai.coverletter.CoverLetterEditTurnRepository aiEdits;
  private final ApplicationDetailRepository applicationDetails;
- public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,CoverLetterVersionRepository versions,QuestionExperienceLinkRepository links,JobPostingRepository postings,ApplicationDetailRepository applicationDetails,com.hongik.graduate.ai.job.JobAnalysisRepository analyses){this.covers=covers;this.questions=questions;this.versions=versions;this.links=links;this.postings=postings;this.applicationDetails=applicationDetails;this.analyses=analyses;}
+ public CoverLetterService(CoverLetterRepository covers,CoverLetterQuestionRepository questions,CoverLetterVersionRepository versions,QuestionExperienceLinkRepository links,JobPostingRepository postings,ApplicationDetailRepository applicationDetails,com.hongik.graduate.ai.job.JobAnalysisRepository analyses,com.hongik.graduate.ai.coverletter.CoverLetterEditTurnRepository aiEdits){this.covers=covers;this.questions=questions;this.versions=versions;this.links=links;this.postings=postings;this.applicationDetails=applicationDetails;this.analyses=analyses;this.aiEdits=aiEdits;}
  public record Create(String companyName,String positionName,LocalDate deadline,String jdUrl){}
  public record Patch(String companyName,String positionName,LocalDate deadline,String status,String jdUrl){}
  public record QuestionCreate(String questionText,Integer characterLimit){}
@@ -57,6 +58,7 @@ public class CoverLetterService {
  if(req.status()!=null){if(!Set.of("DRAFT","IN_PROGRESS","COMPLETED").contains(req.status()))throw invalid();c.status=req.status();}
  return c;}
  public void delete(UUID user,UUID id){own(user,id);
+ aiEdits.deleteByCoverLetterId(id);
  applicationDetails.deleteByCoverLetterId(id);
  postings.findByCoverLetterId(id).ifPresent(p->analyses.deleteById(p.id));
  postings.deleteByCoverLetterId(id);
@@ -74,7 +76,7 @@ public class CoverLetterService {
  if(req.answerText()!=null){answer(req.answerText(),e.characterLimit);e.answerText=req.answerText();}
  return e;}
  public void deleteQuestion(UUID user,UUID parent,UUID q){
- ownQuestion(user,parent,q);links.deleteByQuestionId(q);questions.deleteById(q);
+ ownQuestion(user,parent,q);aiEdits.deleteByQuestionId(q);links.deleteByQuestionId(q);questions.deleteById(q);
  List<CoverLetterQuestion> rest=questions.findByCoverLetterIdOrderByDisplayOrderAsc(parent);
  for(int i=0;i<rest.size();i++)rest.get(i).displayOrder=i+1;}
  public List<CoverLetterQuestion> reorder(UUID user,UUID parent,OrderRequest req){

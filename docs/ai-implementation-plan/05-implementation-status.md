@@ -55,3 +55,16 @@ Run `cd be && .\mvnw.cmd verify` without API keys for offline unit/integration t
 **Verification:** Java 17 Maven verify; dedicated tests of JSON schema versions, SDK rate-limit error mapping, evidence handling, confirmed draft protection, and concurrent H2 chat writes.
 
 **Remaining limitations:** No paid live model tests; AI output evidence does not establish semantic truth; provider-wide and per-user quotas are not implemented; confirmed-JD protection should ultimately be made atomic against concurrent manual edits; long-running AI calls currently hold experience row locks. The interview session/feedback application workflow remains out of scope.
+
+
+## 2026-11-01 졸프 요청 범위 추가 구현 (기존 2026-10-31 스냅샷 이후)
+
+- **토큰 준비**: `AiKeyAutoConfiguration`이 `AI_API_KEY`만 설정된 경우 실제 OpenAI Provider/ChatModel을 선택합니다. 명시적 `AI_ENABLED` / `AI_PROVIDER`는 우선합니다. 가짜 키로 Bean 설정 확인 테스트만 수행하며 실제 유료 요청은 하지 않습니다.
+- **경험 고도화**: `POST /api/experiences/{id}/ai-chat/next-question`이 구조화 요약, completeness, 최근 대화에 기반해 미완성 필드 하나에 대한 다음 질문을 생성합니다. 자동 저장하지 않습니다.
+- **JD/기업/직무**: `POST /api/cover-letters/{coverId}/posting/role-analyze`(소유 JD 기반)와 `POST /api/cover-letters/{coverId}/company/analyze`(사용자가 제공한 URL과 본문 기반, 서버 원격 수집 없음)을 추가했습니다. 모델 출력의 원문 offset/quote를 검사하고 결과는 미리보기로 반환합니다. 기업 출처 URL의 진위나 최신성을 검증하지 않습니다.
+- **지원 전략**: `POST /api/cover-letters/{coverId}/questions/{questionId}/strategy`의 구조화 AI 응답과 스키마·검증을 추가했습니다.
+- **문항 자동 분류**: `POST /api/cover-letters/{coverId}/questions/{questionId}/analyze`를 추가했습니다. 문항 유형·의도·정확한 문항 인용 및 기존 유형별 역량 정책을 미리보기로 반환합니다.
+- **문항별 첨삭 대화**: `GET/POST /api/cover-letters/{coverId}/questions/{questionId}/ai-chat/turns` 및 `cover_letter_ai_edit_turns` 테이블을 추가했습니다. JWT 소유권·선택 경험 재검증, requestId 멱등성, 글자 수 경고, 원본 answerText 비자동저장, 질문 삭제 시 기록 제거를 포함합니다.
+- **가이드**: `docs/AI_READY_GUIDE.md`에 키만 넣는 방법과 요청 예시, 제외 범위를 정리했습니다.
+- **요청에 따라 제외**: 운영용 요청 횟수/비용 쿼터/서킷브레이커, 면접 세션/피드백 워크플로우. 기존 인터뷰 계약은 변경하지 않았습니다.
+- **한계**: 실제 OpenAI 토큰으로 모델 품질·스키마 순응도 E2E 확인 전입니다. AI 요약/초안은 미승인 상태이고 사용자가 검증해야 합니다. 운영 DB에는 신규 첨삭 대화 테이블 스키마 적용이 필요합니다. 본 문서의 앞부분에 적힌 2026-10-31 미구현 항목 중 위에서 구현된 항목은 이 최신 절을 우선합니다.

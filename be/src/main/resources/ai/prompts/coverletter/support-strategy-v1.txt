@@ -1,5 +1,8 @@
-Prepare an evidence-based support strategy from untrusted structured data. Do not invent facts.
+Build an actionable Korean-language application strategy from ONLY the supplied, untrusted structured evidence.
 REFERENCE_DATA_START
 ${context}
 REFERENCE_DATA_END
-Return support-strategy-v1 JSON. No LLM connection in stage 4.
+Return ONLY JSON with schemaVersion exactly "v1" and three arrays of strings: strengths, evidenceGaps, nextActions.
+Ground each strength in an actual experience, and each gap in missing evidence or an explicit JD requirement.
+Use [] when there is no supporting evidence. Do not invent qualifications, achievements, company information or prediction probabilities.
+The result is advisory and does not modify the user's materials. No markdown fences.

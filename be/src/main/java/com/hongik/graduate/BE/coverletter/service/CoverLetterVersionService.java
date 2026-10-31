@@ -12,9 +12,10 @@ public class CoverLetterVersionService {
  private final CoverLetterQuestionRepository questions;
  private final CoverLetterVersionRepository versions;
  private final QuestionExperienceLinkRepository links;
+ private final com.hongik.graduate.ai.coverletter.CoverLetterEditTurnRepository aiEdits;
  private final ObjectMapper mapper=new ObjectMapper();
- public CoverLetterVersionService(CoverLetterRepository c,CoverLetterQuestionRepository q,CoverLetterVersionRepository v,QuestionExperienceLinkRepository l){
- covers=c;questions=q;versions=v;links=l;}
+ public CoverLetterVersionService(CoverLetterRepository c,CoverLetterQuestionRepository q,CoverLetterVersionRepository v,QuestionExperienceLinkRepository l,com.hongik.graduate.ai.coverletter.CoverLetterEditTurnRepository aiEdits){
+ covers=c;questions=q;versions=v;links=l;this.aiEdits=aiEdits;}
  public record SaveRequest(String label){}
  public record QuestionSnapshot(UUID id,String questionText,int characterLimit,String answerText,int displayOrder){}
  public record Snapshot(List<QuestionSnapshot> questions){}
@@ -61,6 +62,7 @@ public class CoverLetterVersionService {
   questions.save(q);
  }
  for(var q:current)if(!retained.contains(q.id)){
+ aiEdits.deleteByQuestionId(q.id);
  links.deleteByQuestionId(q.id);
  questions.delete(q);
  }

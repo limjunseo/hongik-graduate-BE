@@ -87,12 +87,16 @@ public final class MockAiProvider implements AiProvider {
                         + ",\"warnings\":[\"MOCK_ONLY\"],\"usedExperienceIds\":[],\"schemaVersion\":\"v1\"}";
                 case "coverletter-revision-v1" -> "{\"revisedText\":\"" + marker
                         + "\",\"changeReasons\":[],\"warnings\":[\"MOCK_ONLY\"],\"schemaVersion\":\"v1\"}";
+                case "coverletter-classification-v1" -> "{\"questionType\":\"MOTIVATION\",\"evaluationIntent\":\"MOCK ONLY\",\"evidenceQuote\":\"\",\"schemaVersion\":\"v1\"}";
+                case "experience-next-question-v1" -> "{\"question\":\"[MOCK ONLY]\",\"targetField\":\"situation\",\"reason\":\"MOCK ONLY\",\"schemaVersion\":\"v1\"}";
                 case "support-strategy-v1" -> "{\"strengths\":[],\"evidenceGaps\":[],\"nextActions\":[],"
                         + "\"schemaVersion\":\"v1\"}";
                 case "experience-summary-v1" -> "{\"schemaVersion\":\"v1\","
                         + "\"situation\":null,\"task\":null,\"action\":null,"
                         + "\"result\":null,\"role\":null,\"conflict\":null,\"learned\":null,"
-                        + "\"skills\":[],\"keywords\":[],\"evidenceSources\":[]}";                case "job-analysis-v1" -> "{\"requiredSkills\":[],\"preferredSkills\":[],"
+                        + "\"skills\":[],\"keywords\":[],\"evidenceSources\":[]}";                case "company-analysis-v1" -> "{\"summary\":\"[MOCK ONLY]\",\"evidence\":[],\"schemaVersion\":\"v1\"}";
+                case "role-analysis-v1" -> "{\"summary\":\"[MOCK ONLY]\",\"skills\":[],\"responsibilities\":[],\"evidence\":[],\"schemaVersion\":\"v1\"}";
+                case "job-analysis-v1" -> "{\"requiredSkills\":[],\"preferredSkills\":[],"
                         + "\"responsibilities\":[],\"coreCompetencies\":[],"
                         + "\"keywords\":[],\"companyValues\":[],"
                         + "\"evidence\":[],\"analysisStatus\":\"DRAFT\",\"schemaVersion\":\"v1\"}";                case "interview-question-v1" -> "{\"question\":\"" + marker

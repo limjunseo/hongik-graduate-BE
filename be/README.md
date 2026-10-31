@@ -24,16 +24,16 @@ be/
 
 도메인 로직은 `com.hongik.graduate.ai.common.AiProvider` 포트의
 `generate(AiRequest)` / `chat(AiRequest)`를 사용합니다. `AiGateway`가
-기능 활성화 여부를 검사합니다. Spring AI `ChatModel`은 나중에
-실제 Provider 어댑터 내부에서 사용하며 업체 SDK 타입을 도메인에 노출하지 않습니다.
+기능 활성화 여부를 검사합니다. 실제 OpenAI 연결은 Spring AI `ChatModel`을
+`SpringAiProviderAdapter` 내부에서 사용하며 업체 SDK 타입을 도메인에 노출하지 않습니다.
 
-- 기본 설정: `app.ai.enabled=false`, `app.ai.provider=mock`
-  (환경변수 `AI_ENABLED`, `AI_PROVIDER`로 제어).
-- 실제 LLM 스타터/API Key는 없습니다. 현재 `MockAiProvider`만 Bean으로 등록됩니다.
-  `AiGateway`가 꺼져 있으면 generate/chat 호출을 차단합니다.
-- 개발 목적으로 `AI_ENABLED=true`로 설정하더라도 응답에
-  `provider=mock`, `isMock=true` 및 `[MOCK ONLY]` 문구가 들어가며
+- 기본 설정: `app.ai.enabled=false`, `app.ai.provider=mock`. 키가 없으면
+  원격 API가 호출되지 않으며 `AiGateway`가 AI 기능을 차단합니다.
+- `be/.env-local`에 `AI_API_KEY`만 넣으면 OpenAI 어댑터가 자동 선택됩니다.
+  `AI_ENABLED` 또는 `AI_PROVIDER`를 명시하면 그 설정이 우선합니다.
+- Mock만 사용하면 응답에 `provider=mock`, `isMock=true`, `[MOCK ONLY]`가 나타나며
   실제 글이나 조언을 생성하지 않습니다.
+- 설정법·신규 API는 `../docs/AI_READY_GUIDE.md`에서 확인합니다.
 - 정적 템플릿: `resources/ai/prompts/common/{generate,chat}-v1.txt`,
   템플릿 변수는 `${instruction}`입니다. 템플릿 이름·버전은 allowlist로 검사합니다.
 - `outputSchemaId=null`은 비어 있지 않은 일반 텍스트,

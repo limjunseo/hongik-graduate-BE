@@ -14,20 +14,25 @@ public final class AiPromptTemplateRegistry {
     private final Map<String, AiPromptTemplate> templates;
 
     public AiPromptTemplateRegistry(ResourceLoader resourceLoader) {
-        this.templates = Map.of(
-                "generate:v1", load(resourceLoader, "generate", "v1"),
-                "chat:v1", load(resourceLoader, "chat", "v1"),
-                "coverletter-draft:v1", load(resourceLoader, "coverletter-draft", "v1"),
-                "coverletter-revision:v1", load(resourceLoader, "coverletter-revision", "v1"),
-                "support-strategy:v1", load(resourceLoader, "support-strategy", "v1"),
-                "interview-question:v1", load(resourceLoader, "interview-question", "v1"),
-                "interview-feedback:v1", load(resourceLoader, "interview-feedback", "v1"),
-                "job-analysis:v1", load(resourceLoader, "job-analysis", "v1"),
-                "experience-summary:v1", load(resourceLoader, "experience-summary", "v1"));
+        this.templates = Map.ofEntries(
+                Map.entry("generate:v1", load(resourceLoader, "generate", "v1")),
+                Map.entry("chat:v1", load(resourceLoader, "chat", "v1")),
+                Map.entry("coverletter-draft:v1", load(resourceLoader, "coverletter-draft", "v1")),
+                Map.entry("coverletter-revision:v1", load(resourceLoader, "coverletter-revision", "v1")),
+                Map.entry("support-strategy:v1", load(resourceLoader, "support-strategy", "v1")),
+                Map.entry("coverletter-classification:v1", load(resourceLoader, "coverletter-classification", "v1")),
+                Map.entry("experience-next-question:v1", load(resourceLoader, "experience-next-question", "v1")),
+                Map.entry("interview-question:v1", load(resourceLoader, "interview-question", "v1")),
+                Map.entry("interview-feedback:v1", load(resourceLoader, "interview-feedback", "v1")),
+                Map.entry("job-analysis:v1", load(resourceLoader, "job-analysis", "v1")),
+                Map.entry("company-analysis:v1", load(resourceLoader, "company-analysis", "v1")),
+                Map.entry("role-analysis:v1", load(resourceLoader, "role-analysis", "v1")),
+                Map.entry("experience-summary:v1", load(resourceLoader, "experience-summary", "v1")));
     }
 
     private static AiPromptTemplate load(ResourceLoader loader, String name, String version) {
-        String folder = name.startsWith("interview-") ? "interview"
+        String folder = name.startsWith("company-") || name.startsWith("role-") ? "job"
+                : name.startsWith("interview-") ? "interview"
                 : name.startsWith("job-") ? "job"
                 : name.startsWith("experience-") ? "experience"
                 : name.startsWith("coverletter-") || name.equals("support-strategy")

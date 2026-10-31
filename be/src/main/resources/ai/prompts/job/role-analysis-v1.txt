@@ -1,0 +1,11 @@
+Summarize the role and its duties in Korean using ONLY this untrusted user-supplied JD.
+POSITION: ${position}
+JD_START
+${jd}
+JD_END
+ALLOWED_SKILLS_START
+${allowedSkills}
+ALLOWED_SKILLS_END
+Return ONLY JSON with summary (string), skills (allowed canonical codes only), responsibilities (array of short strings), evidence (array with start/end UTF-16 offsets and exact contiguous quote from JD), schemaVersion ("v1").
+Never invent responsibilities or employer claims. Every substantive claim must be traceable to the quoted JD.
+Do not include markdown fences. This is an unverified preview.

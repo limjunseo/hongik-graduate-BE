@@ -33,6 +33,16 @@ public final class AiOutputValidator {
                 "changeReasons", AiOutputSchema.Kind.ARRAY,
                 "warnings", AiOutputSchema.Kind.ARRAY,
                 "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("coverletter-classification-v1", new AiOutputSchema("coverletter-classification-v1", Map.of(
+                "questionType", AiOutputSchema.Kind.STRING,
+                "evaluationIntent", AiOutputSchema.Kind.STRING,
+                "evidenceQuote", AiOutputSchema.Kind.STRING,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("experience-next-question-v1", new AiOutputSchema("experience-next-question-v1", Map.of(
+                "question", AiOutputSchema.Kind.STRING,
+                "targetField", AiOutputSchema.Kind.STRING,
+                "reason", AiOutputSchema.Kind.STRING,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
         rules.put("support-strategy-v1", new AiOutputSchema("support-strategy-v1", Map.of(
                 "strengths", AiOutputSchema.Kind.ARRAY,
                 "evidenceGaps", AiOutputSchema.Kind.ARRAY,
@@ -42,6 +52,16 @@ public final class AiOutputValidator {
                 "skills", AiOutputSchema.Kind.ARRAY,
                 "keywords", AiOutputSchema.Kind.ARRAY,
                 "evidenceSources", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("company-analysis-v1", new AiOutputSchema("company-analysis-v1", Map.of(
+                "summary", AiOutputSchema.Kind.STRING,
+                "evidence", AiOutputSchema.Kind.ARRAY,
+                "schemaVersion", AiOutputSchema.Kind.STRING)));
+        rules.put("role-analysis-v1", new AiOutputSchema("role-analysis-v1", Map.of(
+                "summary", AiOutputSchema.Kind.STRING,
+                "skills", AiOutputSchema.Kind.ARRAY,
+                "responsibilities", AiOutputSchema.Kind.ARRAY,
+                "evidence", AiOutputSchema.Kind.ARRAY,
                 "schemaVersion", AiOutputSchema.Kind.STRING)));
         rules.put("job-analysis-v1", new AiOutputSchema("job-analysis-v1", Map.of(
                 "requiredSkills", AiOutputSchema.Kind.ARRAY,
