@@ -6,6 +6,14 @@ Backend와 AI 기능을 하나의 Java 17 / Spring Boot 애플리케이션으로
 AI 공통 계약은 Spring AI를 사용하고, 경험 질문 정책은 외부 모델 호출이 없는
 정적 도메인 정책으로 구현되어 있습니다.
 
+## Windows 팀원 원클릭 실행
+
+CMD에서 **명령어 한 줄**로 Git·Node.js·JDK 자동 확인/설치부터 FE·BE 복제 및 실행까지 진행합니다.
+
+[한 줄 설치 명령어 및 제한사항 → GETTING_STARTED.md](./GETTING_STARTED.md)
+
+별도 MySQL·PostgreSQL 서버는 필요 없으며 H2 파일 DB가 자동으로 초기화됩니다.
+
 ## 기술 스택
 
 - Java 17
