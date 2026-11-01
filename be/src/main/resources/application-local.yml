@@ -1,6 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:file:./data/hongik-graduate
+    # Embedded, file-backed H2 (not an external RDB server).
+    # Files are stored under be/data/ and retained between launches.
+    # Override only if you want a different local file path.
+    url: jdbc:h2:file:${LOCAL_DB_FILE:./data/hongik-graduate}
     username: sa
     password:
     driver-class-name: org.h2.Driver

@@ -2,6 +2,19 @@
 
 Backend와 AI 기능을 함께 실행하는 Java 17 / Spring Boot 애플리케이션입니다.
 
+## 로컬 DB: 서버 설치가 필요 없는 파일형 H2
+
+- 별도 MySQL/PostgreSQL/SQLite 서버, Docker 컨테이너, DB 계정 생성이 **필요하지 않습니다**.
+- 기본 로컬 프로필은 `jdbc:h2:file:./data/hongik-graduate`를 사용합니다.
+- `be/` 폴더에서 실행하면 `be/data/hongik-graduate.mv.db` 파일에 데이터가 영구 저장됩니다.
+- 서버를 다시 시작해도 저장된 데이터가 유지됩니다. 테이블은 로컬 Hibernate 설정으로 자동 생성/업데이트됩니다.
+- `be/data/`는 Git에서 제외되므로 팀원마다 **서로 다른 로컬 DB**를 사용합니다.
+- 저장 위치를 변경할 때만 `be/.env-local`에 `LOCAL_DB_FILE=./data/my-database`를 설정합니다.
+- 파일 백업은 백엔드를 종료한 뒤 FE 저장소의 `backup-local-db.ps1`을 사용하세요.
+- 레포 폴더를 지우면 로컬 DB도 지워집니다. 중요한 데이터는 따로 백업하세요.
+
+현재 졸업 프로젝트 범위에서는 별도의 운영 RDB 서버나 DB 배포를 계획하지 않습니다. 여러 팀원의 **같은 데이터 실시간 공유**는 로컬 파일 DB만으로는 제공되지 않습니다.
+
 ## 구조
 
 ```text

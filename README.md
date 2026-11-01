@@ -23,6 +23,13 @@ Spring Boot 4.1.1은 Java 17부터 26까지 지원합니다.
 버전 호환 범위, Java LTS 변경 방법과 Spring 업그레이드 검증 절차는
 [`VERSION_GUIDE.md`](./VERSION_GUIDE.md)를 따릅니다.
 
+## 데이터 저장
+
+팀별로 별도 RDB 서버를 구축하지 않습니다. Spring Boot가 내장형 H2 파일 DB를 사용해
+`be/data/hongik-graduate.mv.db`에 저장합니다. 로컬 실행 후 재시작해도 유지되고,
+Git에 올라가지 않습니다. 중요한 데이터는 BE 실행을 종료한 후 FE의 백업 스크립트로
+별도 보관하세요. 자세한 내용은 [`be/README.md`](./be/README.md)를 참고하세요.
+
 ## 검증
 
 저장소 루트에서 다음 명령을 실행합니다.
