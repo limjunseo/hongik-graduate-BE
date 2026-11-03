@@ -1,5 +1,6 @@
 be/mvnw text eol=lf
 be/mvnw.cmd text eol=crlf
+deploy/qa/cloud-init.sh text eol=lf
 *.md text eol=lf
 *.example text eol=lf
 *.java text eol=lf
